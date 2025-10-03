@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Anjelina Villalobos | Portfolio</title>
+    <link rel="icon" href="data:,">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Archivo', -apple-system, sans-serif;
+        }
+
+        .fullscreen-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Background with dramatic transition */
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            opacity: 1;
+            filter: brightness(0.85) contrast(1.1);
+            transform: scale(1);
+            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+                        filter 1s ease;
+        }
+
+        .background-image.fade-out {
+            opacity: 0;
+            transform: scale(1.08);
+        }
+
+        /* Gradient overlays for depth */
+        .gradient-overlay {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .gradient-overlay.top {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 25%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+        }
+
+        .gradient-overlay.bottom {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+        }
+
+        /* Header */
+        .main-header {
+            position: absolute;
+            top: 2rem;
+            left: 3.5rem;
+            right: 3.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 3;
+        }
+
+        .artist-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+        }
+
+        .main-header nav {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .main-header nav a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .main-header nav a::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+
+        .main-header nav a:hover {
+            color: #fff;
+        }
+
+        .main-header nav a:hover::before {
+            width: 100%;
+        }
+
+        /* Large image title overlay */
+        .image-title {
+            position: absolute;
+            bottom: 8rem;
+            left: 3.5rem;
+            z-index: 3;
+            max-width: 60%;
+        }
+
+        .image-title h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+        }
+
+        .image-title h1.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .image-title .meta {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease 0.5s, transform 0.5s ease 0.5s;
+        }
+
+        .image-title .meta.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Counter removed */
+
+        /* Year filter - redesigned */
+        .year-filter {
+            position: absolute;
+            bottom: 3rem;
+            left: 3.5rem;
+            z-index: 3;
+            display: flex;
+            gap: 0;
+        }
+
+        .year-filter button {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+            padding: 0.7rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        /* Remove blue focus ring/animation when navigating arrows */
+        .year-filter button:focus,
+        .year-filter button:focus-visible {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .year-filter button:hover {
+            color: rgba(255, 255, 255, 0.9);
+            border-bottom-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .year-filter button.active {
+            color: #fff;
+            border-bottom-color: #fff;
+            border-bottom-width: 3px;
+        }
+
+        /* Thumbnail grid - larger, better positioned */
+        .thumbnail-grid {
+            position: absolute;
+            bottom: 3rem;
+            right: 3.5rem;
+            z-index: 3;
+            display: grid;
+            grid-template-columns: repeat(6, 70px);
+            gap: 0.6rem;
+        }
+
+        .thumbnail {
+            width: 70px;
+            height: 70px;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thumbnail::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .thumbnail:hover {
+            opacity: 0.7;
+            transform: translateY(-5px);
+        }
+
+        .thumbnail.active {
+            opacity: 1;
+        }
+
+        .thumbnail.active::after {
+            border-color: #fff;
+        }
+
+        /* Hover zones */
+        .hover-zone {
+            position: absolute;
+            top: 0;
+            width: 35%;
+            height: 100%;
+            z-index: 2; /* behind interactive UI like year filter and thumbnails */
+        }
+
+        .hover-zone.left {
+            left: 0;
+            cursor: w-resize;
+        }
+
+        .hover-zone.right {
+            right: 0;
+            cursor: e-resize;
+        }
+
+        /* Arrows - minimal and elegant */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 4;
+            pointer-events: none;
+            padding: 0 3.5rem;
+        }
+
+        .carousel-nav button {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            padding: 1rem 1.5rem;
+            font-weight: 100;
+            line-height: 1;
+        }
+
+        .carousel-nav button.visible {
+            opacity: 1;
+        }
+
+        .carousel-nav button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Progress bar - sleek */
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 3;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #fff;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Remove keyboard hint - cleaner without it */
+    </style>
+</head>
+<body>
+
+    <div class="fullscreen-container">
+
+        <div class="background-image"></div>
+
+        <div class="gradient-overlay top"></div>
+        <div class="gradient-overlay bottom"></div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <header class="main-header">
+            <div class="artist-name">Anjelina Villalobos</div>
+            <nav>
+                <a href="#">Work</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </nav>
+        </header>
+
+        
+
+        <div class="image-title">
+            <h1 id="img-title"></h1>
+            <div class="meta" id="img-meta"></div>
+        </div>
+
+        <div class="year-filter">
+            <button class="year-btn active" data-year="all">All</button>
+            <button class="year-btn" data-year="2024">2024</button>
+            <button class="year-btn" data-year="2023">2023</button>
+            <button class="year-btn" data-year="2022">2022</button>
+        </div>
+
+        <div class="thumbnail-grid" id="thumbnails"></div>
+
+        <div class="hover-zone left"></div>
+        <div class="hover-zone right"></div>
+
+        <div class="carousel-nav">
+            <button class="prev">‹</button>
+            <button class="next">›</button>
+        </div>
+
+    </div>
+
+    <script>
+        const gallery = [
+            { year: 2024, image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=2000', title: 'Ethereal Light', medium: 'Digital', thumb: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=200' },
+            { year: 2024, image: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=2000', title: 'Urban Dreams', medium: 'Mixed Media', thumb: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=200' },
+            { year: 2024, image: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=2000', title: 'Abstract Motion', medium: 'Digital', thumb: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=200' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=2000', title: 'Neon Nights', medium: 'Photography', thumb: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=200' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2000', title: 'Chromatic Study', medium: 'Digital', thumb: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=200' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=2000', title: 'Celestial Forms', medium: 'Digital', thumb: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=200' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2000', title: 'Digital Landscape', medium: 'Digital', thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=200' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?q=80&w=2000', title: 'Infinite Horizon', medium: 'Photography', thumb: 'https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?q=80&w=200' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?q=80&w=2000', title: 'Gradient Space', medium: 'Digital', thumb: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?q=80&w=200' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=2000', title: 'Prismatic Vision', medium: 'Mixed Media', thumb: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=200' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?q=80&w=2000', title: 'Color Field', medium: 'Digital', thumb: 'https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?q=80&w=200' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?q=80&w=2000', title: 'Radiant Bloom', medium: 'Digital', thumb: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?q=80&w=200' }
+        ];
+
+        let filteredGallery = [...gallery];
+        let currentIndex = 0;
+        let isTransitioning = false;
+
+        const backgroundImage = document.querySelector('.background-image');
+        const imgTitle = document.getElementById('img-title');
+        const imgMeta = document.getElementById('img-meta');
+        
+        const progress = document.getElementById('progress');
+        const leftZone = document.querySelector('.hover-zone.left');
+        const rightZone = document.querySelector('.hover-zone.right');
+        const prevButton = document.querySelector('.carousel-nav .prev');
+        const nextButton = document.querySelector('.carousel-nav .next');
+        const thumbnailGrid = document.getElementById('thumbnails');
+
+        // Preload
+        gallery.forEach(item => {
+            const img = new Image();
+            img.src = item.image;
+        });
+
+        function init() {
+            updateImage(0, false);
+            renderThumbnails();
+        }
+
+        function updateImage(index, animate = true) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            currentIndex = index;
+            const item = filteredGallery[currentIndex];
+
+            // Hide title first
+            imgTitle.classList.remove('visible');
+            imgMeta.classList.remove('visible');
+
+            if (animate) {
+                backgroundImage.classList.add('fade-out');
+            }
+
+            setTimeout(() => {
+                backgroundImage.style.backgroundImage = `url('${item.image}')`;
+                imgTitle.textContent = item.title;
+                imgMeta.textContent = `${item.year} · ${item.medium}`;
+
+                const progressPercent = ((currentIndex + 1) / filteredGallery.length) * 100;
+                progress.style.width = progressPercent + '%';
+
+                if (animate) {
+                    backgroundImage.classList.remove('fade-out');
+                }
+
+                // Show title after image loads
+                setTimeout(() => {
+                    imgTitle.classList.add('visible');
+                    imgMeta.classList.add('visible');
+                }, 300);
+
+                updateThumbnails();
+                isTransitioning = false;
+            }, animate ? 1000 : 0);
+        }
+
+        function renderThumbnails() {
+            thumbnailGrid.innerHTML = '';
+            filteredGallery.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'thumbnail';
+                thumb.style.backgroundImage = `url('${item.thumb}')`;
+                if (index === 0) thumb.classList.add('active');
+                thumb.addEventListener('click', () => updateImage(index));
+                thumbnailGrid.appendChild(thumb);
+            });
+        }
+
+        function updateThumbnails() {
+            const thumbs = thumbnailGrid.querySelectorAll('.thumbnail');
+            thumbs.forEach((thumb, index) => {
+                thumb.classList.toggle('active', index === currentIndex);
+            });
+        }
+
+        function navigate(direction) {
+            const newIndex = (currentIndex + direction + filteredGallery.length) % filteredGallery.length;
+            updateImage(newIndex);
+        }
+
+        // Year filter
+        document.querySelectorAll('.year-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const year = btn.dataset.year;
+                filteredGallery = year === 'all' ? [...gallery] : gallery.filter(item => item.year === parseInt(year));
+
+                currentIndex = 0;
+                updateImage(0);
+                renderThumbnails();
+            });
+        });
+
+        // Navigation
+        leftZone.addEventListener('mouseenter', () => prevButton.classList.add('visible'));
+        leftZone.addEventListener('mouseleave', () => prevButton.classList.remove('visible'));
+        rightZone.addEventListener('mouseenter', () => nextButton.classList.add('visible'));
+        rightZone.addEventListener('mouseleave', () => nextButton.classList.remove('visible'));
+
+        prevButton.addEventListener('click', () => navigate(-1));
+        nextButton.addEventListener('click', () => navigate(1));
+        leftZone.addEventListener('click', () => navigate(-1));
+        rightZone.addEventListener('click', () => navigate(1));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') navigate(-1);
+            if (e.key === 'ArrowRight') navigate(1);
+        });
+
+        init();
+    </script>
+
+</body>
+</html>

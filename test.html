@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="referrer" content="no-referrer">
+    <title>Anjelina Villalobos | Portfolio</title>
+	<link rel="icon" href="data:,">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS Reset and Basic Setup */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevents scrollbars */
+            background-color: #111; /* Dark background */
+            color: #fff;
+            font-family: 'Special Elite', monospace; /* Our chosen font */
+        }
+
+        /* The main container for the full-screen experience */
+        .fullscreen-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The background image carousel container */
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            z-index: 1;
+            animation: heroZoom 30s ease-in-out infinite alternate;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .background-image.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+
+        /* The noise/static overlay */
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.15; /* Level 2 grain */
+            mix-blend-mode: overlay;
+        }
+        
+        /* Persistent full-screen noise overlay using pseudo-element */
+        body::before {
+            content: "";
+            position: fixed; /* Stays in place even if the page scrolls */
+            top: 0;
+            left: 0;
+            width: 100vw; /* 100% of the viewport width */
+            height: 100vh; /* 100% of the viewport height */
+            z-index: 1000; /* Ensures it's on top of other content */
+            pointer-events: none; /* Allows clicks to go through the overlay */
+
+            /* The actual noise effect using an SVG filter */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            
+            /* Controls the intensity of the grain */
+            opacity: 0.15; 
+            
+            /* How the grain blends with the content underneath */
+            mix-blend-mode: overlay; 
+        }
+        
+        /* The main header navigation */
+        .main-header {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            right: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 3;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .main-header .artist-name {
+            font-weight: bold;
+        }
+
+        .main-header nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .main-header nav a:hover {
+            opacity: 0.7;
+        }
+
+        /* The bottom-left year filter navigation */
+        .year-filter {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 3;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* Hover zones for arrow navigation */
+        .hover-zone {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            z-index: 3;
+            cursor: pointer;
+        }
+
+        .hover-zone.left {
+            left: 0;
+        }
+
+        .hover-zone.right {
+            right: 0;
+        }
+
+        /* The carousel navigation arrows */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .carousel-nav button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+            padding: 0 2rem;
+        }
+
+        .carousel-nav button.visible {
+            opacity: 1;
+        }
+
+        .carousel-nav button:hover {
+            transform: scale(1.2);
+        }
+
+        /* Keyframe animations */
+        @keyframes heroZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="fullscreen-container">
+
+        <div class="background-image"></div>
+
+        <div class="noise-overlay"></div>
+
+        <header class="main-header">
+            <div class="artist-name">Anjelina Villalobos</div>
+            <nav>
+                <a href="#">PORTFOLIO</a>
+                <a href="#">ABOUT</a>
+                <a href="#">CONTACT</a>
+            </nav>
+        </header>
+
+        <div class="hover-zone left"></div>
+        <div class="hover-zone right"></div>
+
+        <div class="carousel-nav">
+            <button class="prev">&lt;</button>
+            <button class="next">&gt;</button>
+        </div>
+
+        <footer class="year-filter">
+            <span>WORK / 2024</span>
+        </footer>
+
+    </div>
+
+    <script>
+        const leftZone = document.querySelector('.hover-zone.left');
+        const rightZone = document.querySelector('.hover-zone.right');
+        const prevButton = document.querySelector('.carousel-nav .prev');
+        const nextButton = document.querySelector('.carousel-nav .next');
+        const backgroundImage = document.querySelector('.background-image');
+        const yearDisplay = document.querySelector('.year-filter span');
+
+        // Image gallery data
+        const gallery = [
+            {
+                year: 2022,
+                image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=2000&auto=format&fit=crop'
+            },
+            {
+                year: 2023,
+                image: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=2000&auto=format&fit=crop'
+            }
+        ];
+
+        let currentIndex = 0;
+
+        // Initialize with first image
+        backgroundImage.style.backgroundImage = `url('${gallery[currentIndex].image}')`;
+        yearDisplay.textContent = `WORK / ${gallery[currentIndex].year}`;
+
+        // Function to change image with fade effect
+        function changeImage(newIndex) {
+            if (newIndex === currentIndex) return;
+
+            // Fade out
+            backgroundImage.classList.add('fade-out');
+
+            // After fade out completes, change image and fade in
+            setTimeout(() => {
+                currentIndex = newIndex;
+                backgroundImage.style.backgroundImage = `url('${gallery[currentIndex].image}')`;
+                yearDisplay.textContent = `WORK / ${gallery[currentIndex].year}`;
+                backgroundImage.classList.remove('fade-out');
+            }, 600); // Match the CSS transition duration
+        }
+
+        // Arrow hover effects
+        leftZone.addEventListener('mouseenter', () => {
+            prevButton.classList.add('visible');
+        });
+
+        leftZone.addEventListener('mouseleave', () => {
+            prevButton.classList.remove('visible');
+        });
+
+        rightZone.addEventListener('mouseenter', () => {
+            nextButton.classList.add('visible');
+        });
+
+        rightZone.addEventListener('mouseleave', () => {
+            nextButton.classList.remove('visible');
+        });
+
+        // Navigation functionality
+        prevButton.addEventListener('click', () => {
+            const newIndex = (currentIndex - 1 + gallery.length) % gallery.length;
+            changeImage(newIndex);
+        });
+
+        nextButton.addEventListener('click', () => {
+            const newIndex = (currentIndex + 1) % gallery.length;
+            changeImage(newIndex);
+        });
+
+        // Click on hover zones to navigate
+        leftZone.addEventListener('click', () => {
+            const newIndex = (currentIndex - 1 + gallery.length) % gallery.length;
+            changeImage(newIndex);
+        });
+
+        rightZone.addEventListener('click', () => {
+            const newIndex = (currentIndex + 1) % gallery.length;
+            changeImage(newIndex);
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                const newIndex = (currentIndex - 1 + gallery.length) % gallery.length;
+                changeImage(newIndex);
+            } else if (e.key === 'ArrowRight') {
+                const newIndex = (currentIndex + 1) % gallery.length;
+                changeImage(newIndex);
+            }
+        });
+    </script>
+
+</body>
+</html>

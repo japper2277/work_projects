@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Anjelina Villalobos - Digital Artist Portfolio">
+    <title>Anjelina Villalobos | Portfolio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-elevated: #242424;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #6b6b6b;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #2a2a2a;
+            --overlay: rgba(10, 10, 10, 0.85);
+            --focus-ring: #60a5fa;
+            --spacing-unit: 8px;
+            --max-width: 1600px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Skip to main content for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent);
+            color: white;
+            padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            background: var(--overlay);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: calc(var(--spacing-unit) * 3);
+        }
+
+        .logo {
+            font-size: clamp(1.125rem, 3vw, 1.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .logo:hover,
+        .logo:focus {
+            color: var(--accent);
+            outline: none;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: calc(var(--spacing-unit) * 3);
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        nav a:hover,
+        nav a:focus {
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        nav a:focus-visible::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--focus-ring);
+        }
+
+        /* Main content */
+        main {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: calc(var(--spacing-unit) * 4) calc(var(--spacing-unit) * 3);
+        }
+
+        /* Gallery viewer */
+        .gallery-viewer {
+            margin-bottom: calc(var(--spacing-unit) * 6);
+        }
+
+        .viewer-container {
+            position: relative;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            margin-bottom: calc(var(--spacing-unit) * 3);
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .main-image.loaded {
+            opacity: 1;
+        }
+
+        .image-error {
+            display: none;
+            position: absolute;
+            inset: 0;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            color: var(--text-tertiary);
+        }
+
+        .image-error.show {
+            display: flex;
+        }
+
+        /* Image info */
+        .image-info {
+            margin-bottom: calc(var(--spacing-unit) * 3);
+        }
+
+        .image-title {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: calc(var(--spacing-unit) * 1);
+            line-height: 1.2;
+        }
+
+        .image-meta {
+            display: flex;
+            gap: calc(var(--spacing-unit) * 2);
+            flex-wrap: wrap;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: calc(var(--spacing-unit) * 1);
+        }
+
+        /* Controls */
+        .gallery-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: calc(var(--spacing-unit) * 3);
+            flex-wrap: wrap;
+            margin-bottom: calc(var(--spacing-unit) * 4);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: calc(var(--spacing-unit) * 1.5);
+        }
+
+        .btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3);
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            min-width: 44px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: calc(var(--spacing-unit) * 1);
+        }
+
+        .btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--text-tertiary);
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid var(--focus-ring);
+            outline-offset: 2px;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .counter {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            padding: calc(var(--spacing-unit) * 1);
+        }
+
+        /* Year filter */
+        .year-filter {
+            display: flex;
+            gap: calc(var(--spacing-unit) * 1);
+            flex-wrap: wrap;
+        }
+
+        .year-filter button {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .year-filter button:hover {
+            border-color: var(--text-tertiary);
+            color: var(--text-primary);
+        }
+
+        .year-filter button:focus-visible {
+            outline: 2px solid var(--focus-ring);
+            outline-offset: 2px;
+        }
+
+        .year-filter button.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-elevated);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: calc(var(--spacing-unit) * 3);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Thumbnail grid */
+        .thumbnail-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: calc(var(--spacing-unit) * 3);
+            letter-spacing: -0.01em;
+        }
+
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: calc(var(--spacing-unit) * 2);
+            margin-bottom: calc(var(--spacing-unit) * 6);
+        }
+
+        .thumbnail {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            background: var(--bg-secondary);
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .thumbnail:hover {
+            border-color: var(--text-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .thumbnail:focus-visible {
+            outline: 2px solid var(--focus-ring);
+            outline-offset: 2px;
+        }
+
+        .thumbnail.active {
+            border-color: var(--accent);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .thumbnail:hover img,
+        .thumbnail.active img {
+            opacity: 1;
+        }
+
+        .thumbnail-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 1.5);
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .thumbnail:hover .thumbnail-label,
+        .thumbnail:focus .thumbnail-label {
+            opacity: 1;
+        }
+
+        /* Loading state */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: calc(var(--spacing-unit) * 6) calc(var(--spacing-unit) * 3);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: calc(var(--spacing-unit) * 2);
+            }
+
+            nav ul {
+                gap: calc(var(--spacing-unit) * 2);
+            }
+
+            .gallery-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .year-filter {
+                justify-content: center;
+            }
+
+            .thumbnail-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: calc(var(--spacing-unit) * 1.5);
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 2);
+            }
+
+            .header-content {
+                padding: calc(var(--spacing-unit) * 2);
+            }
+
+            .thumbnail-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+        }
+
+        /* Keyboard navigation helper */
+        .keyboard-hint {
+            display: none;
+            position: fixed;
+            bottom: calc(var(--spacing-unit) * 3);
+            right: calc(var(--spacing-unit) * 3);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: calc(var(--spacing-unit) * 2);
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .keyboard-hint.show {
+            display: block;
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --bg-primary: #000;
+                --bg-secondary: #1a1a1a;
+                --text-primary: #fff;
+                --border: #666;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header role="banner">
+        <div class="header-content">
+            <a href="/" class="logo" aria-label="Anjelina Villalobos Home">Anjelina Villalobos</a>
+            <nav role="navigation" aria-label="Main navigation">
+                <ul>
+                    <li><a href="#gallery" aria-current="page">Work</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="gallery-viewer" aria-label="Gallery viewer">
+            <div class="viewer-container">
+                <img
+                    id="mainImage"
+                    class="main-image"
+                    src=""
+                    alt=""
+                    loading="eager"
+                >
+                <div class="image-error" role="alert" aria-live="polite">
+                    <p>Failed to load image</p>
+                </div>
+            </div>
+
+            <div class="image-info">
+                <h1 id="imageTitle" class="image-title"></h1>
+                <div class="image-meta">
+                    <span class="meta-item">
+                        <span aria-label="Year">📅</span>
+                        <span id="imageYear"></span>
+                    </span>
+                    <span class="meta-item">
+                        <span aria-label="Medium">🎨</span>
+                        <span id="imageMedium"></span>
+                    </span>
+                    <span class="meta-item">
+                        <span aria-label="Position">📍</span>
+                        <span id="imageCounter" class="counter"></span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="progress-container" role="progressbar" aria-label="Gallery progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+
+            <div class="gallery-controls">
+                <div class="nav-buttons">
+                    <button
+                        id="prevBtn"
+                        class="btn"
+                        aria-label="Previous image"
+                        title="Previous (←)"
+                    >
+                        ← Previous
+                    </button>
+                    <button
+                        id="nextBtn"
+                        class="btn btn-primary"
+                        aria-label="Next image"
+                        title="Next (→)"
+                    >
+                        Next →
+                    </button>
+                </div>
+
+                <div class="year-filter" role="group" aria-label="Filter by year">
+                    <button class="year-btn active" data-year="all" aria-pressed="true">All Years</button>
+                    <button class="year-btn" data-year="2024" aria-pressed="false">2024</button>
+                    <button class="year-btn" data-year="2023" aria-pressed="false">2023</button>
+                    <button class="year-btn" data-year="2022" aria-pressed="false">2022</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="thumbnail-section" aria-label="Gallery thumbnails">
+            <h2>Gallery</h2>
+            <div id="thumbnailGrid" class="thumbnail-grid" role="list"></div>
+        </section>
+    </main>
+
+    <footer role="contentinfo">
+        <p>&copy; 2024 Anjelina Villalobos. All rights reserved.</p>
+    </footer>
+
+    <div class="keyboard-hint" id="keyboardHint" role="status" aria-live="polite">
+        Use ← → arrow keys to navigate
+    </div>
+
+    <script>
+        const gallery = [
+            { year: 2024, image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1600&fm=webp', title: 'Ethereal Light', medium: 'Digital Art', thumb: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=300&fm=webp' },
+            { year: 2024, image: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=1600&fm=webp', title: 'Urban Dreams', medium: 'Mixed Media', thumb: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=300&fm=webp' },
+            { year: 2024, image: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1600&fm=webp', title: 'Abstract Motion', medium: 'Digital Art', thumb: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=300&fm=webp' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=1600&fm=webp', title: 'Neon Nights', medium: 'Photography', thumb: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=300&fm=webp' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1600&fm=webp', title: 'Chromatic Study', medium: 'Digital Art', thumb: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=300&fm=webp' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1600&fm=webp', title: 'Celestial Forms', medium: 'Digital Art', thumb: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=300&fm=webp' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1600&fm=webp', title: 'Digital Landscape', medium: 'Digital Art', thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?q=80&w=1600&fm=webp', title: 'Infinite Horizon', medium: 'Photography', thumb: 'https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?q=80&w=1600&fm=webp', title: 'Gradient Space', medium: 'Digital Art', thumb: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=1600&fm=webp', title: 'Prismatic Vision', medium: 'Mixed Media', thumb: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?q=80&w=1600&fm=webp', title: 'Color Field', medium: 'Digital Art', thumb: 'https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?q=80&w=1600&fm=webp', title: 'Radiant Bloom', medium: 'Digital Art', thumb: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?q=80&w=300&fm=webp' }
+        ];
+
+        let filteredGallery = [...gallery];
+        let currentIndex = 0;
+        let isTransitioning = false;
+
+        const mainImage = document.getElementById('mainImage');
+        const imageTitle = document.getElementById('imageTitle');
+        const imageYear = document.getElementById('imageYear');
+        const imageMedium = document.getElementById('imageMedium');
+        const imageCounter = document.getElementById('imageCounter');
+        const progressBar = document.getElementById('progressBar');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const thumbnailGrid = document.getElementById('thumbnailGrid');
+        const keyboardHint = document.getElementById('keyboardHint');
+        const imageError = document.querySelector('.image-error');
+
+        // Preload images for better performance
+        function preloadImages() {
+            gallery.forEach(item => {
+                const img = new Image();
+                img.src = item.image;
+                const thumb = new Image();
+                thumb.src = item.thumb;
+            });
+        }
+
+        function updateImage(index, announce = true) {
+            if (isTransitioning || index < 0 || index >= filteredGallery.length) return;
+
+            isTransitioning = true;
+            currentIndex = index;
+            const item = filteredGallery[currentIndex];
+
+            // Hide error state
+            imageError.classList.remove('show');
+
+            // Fade out current image
+            mainImage.classList.remove('loaded');
+
+            // Load new image
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                mainImage.src = item.image;
+                mainImage.alt = `${item.title} - ${item.medium}, ${item.year}`;
+                mainImage.classList.add('loaded');
+                isTransitioning = false;
+            };
+            tempImg.onerror = () => {
+                imageError.classList.add('show');
+                isTransitioning = false;
+            };
+            tempImg.src = item.image;
+
+            // Update metadata
+            imageTitle.textContent = item.title;
+            imageYear.textContent = item.year;
+            imageMedium.textContent = item.medium;
+            imageCounter.textContent = `${currentIndex + 1} of ${filteredGallery.length}`;
+
+            // Update progress bar
+            const progress = ((currentIndex + 1) / filteredGallery.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressBar.parentElement.setAttribute('aria-valuenow', Math.round(progress));
+
+            // Update button states
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === filteredGallery.length - 1;
+
+            // Update thumbnails
+            updateThumbnails();
+
+            // Announce to screen readers
+            if (announce) {
+                const announcement = `Viewing ${item.title}, image ${currentIndex + 1} of ${filteredGallery.length}`;
+                announceToScreenReader(announcement);
+            }
+        }
+
+        function renderThumbnails() {
+            thumbnailGrid.innerHTML = '';
+
+            filteredGallery.forEach((item, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = 'thumbnail';
+                thumbnail.setAttribute('role', 'listitem');
+                thumbnail.setAttribute('tabindex', '0');
+                thumbnail.setAttribute('aria-label', `View ${item.title}`);
+
+                if (index === currentIndex) {
+                    thumbnail.classList.add('active');
+                    thumbnail.setAttribute('aria-current', 'true');
+                }
+
+                const img = document.createElement('img');
+                img.src = item.thumb;
+                img.alt = '';
+                img.loading = 'lazy';
+
+                const label = document.createElement('div');
+                label.className = 'thumbnail-label';
+                label.textContent = item.title;
+
+                thumbnail.appendChild(img);
+                thumbnail.appendChild(label);
+
+                thumbnail.addEventListener('click', () => updateImage(index));
+                thumbnail.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        updateImage(index);
+                    }
+                });
+
+                thumbnailGrid.appendChild(thumbnail);
+            });
+        }
+
+        function updateThumbnails() {
+            const thumbnails = thumbnailGrid.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                const isActive = index === currentIndex;
+                thumb.classList.toggle('active', isActive);
+                thumb.setAttribute('aria-current', isActive ? 'true' : 'false');
+            });
+        }
+
+        function navigate(direction) {
+            const newIndex = currentIndex + direction;
+            if (newIndex >= 0 && newIndex < filteredGallery.length) {
+                updateImage(newIndex);
+            }
+        }
+
+        function filterByYear(year) {
+            filteredGallery = year === 'all'
+                ? [...gallery]
+                : gallery.filter(item => item.year === parseInt(year));
+
+            currentIndex = 0;
+            updateImage(0);
+            renderThumbnails();
+
+            const announcement = year === 'all'
+                ? `Showing all ${filteredGallery.length} images`
+                : `Showing ${filteredGallery.length} images from ${year}`;
+            announceToScreenReader(announcement);
+        }
+
+        function announceToScreenReader(message) {
+            const liveRegion = document.createElement('div');
+            liveRegion.setAttribute('role', 'status');
+            liveRegion.setAttribute('aria-live', 'polite');
+            liveRegion.className = 'sr-only';
+            liveRegion.style.position = 'absolute';
+            liveRegion.style.left = '-10000px';
+            liveRegion.style.width = '1px';
+            liveRegion.style.height = '1px';
+            liveRegion.style.overflow = 'hidden';
+            liveRegion.textContent = message;
+            document.body.appendChild(liveRegion);
+            setTimeout(() => document.body.removeChild(liveRegion), 1000);
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', () => navigate(-1));
+        nextBtn.addEventListener('click', () => navigate(1));
+
+        document.querySelectorAll('.year-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.year-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
+                filterByYear(btn.dataset.year);
+            });
+        });
+
+        // Keyboard navigation
+        let keyboardUsed = false;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                navigate(-1);
+                if (!keyboardUsed) {
+                    keyboardUsed = true;
+                    keyboardHint.classList.add('show');
+                    setTimeout(() => keyboardHint.classList.remove('show'), 2000);
+                }
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                navigate(1);
+                if (!keyboardUsed) {
+                    keyboardUsed = true;
+                    keyboardHint.classList.add('show');
+                    setTimeout(() => keyboardHint.classList.remove('show'), 2000);
+                }
+            }
+        });
+
+        // Show keyboard hint on first tab
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab' && !keyboardUsed) {
+                keyboardUsed = true;
+                keyboardHint.classList.add('show');
+                setTimeout(() => keyboardHint.classList.remove('show'), 3000);
+            }
+        }, { once: true });
+
+        // Initialize
+        function init() {
+            preloadImages();
+            updateImage(0, false);
+            renderThumbnails();
+        }
+
+        init();
+    </script>
+</body>
+</html>
