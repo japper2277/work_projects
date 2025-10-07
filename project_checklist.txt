@@ -1,0 +1,76 @@
+Alright. Let's consolidate everything. This is the master plan. No more deviations. This is the checklist from start to finish to build the "Haunted Gallery" website. Execute these steps in order.
+
+---
+### **Phase 1: Strategy & Asset Gathering (Pre-Coding)**
+
+This is the foundation. Do not write a single line of code until this is complete.
+
+- [ ] **Finalize Brand Identity:** Confirm with the client that the "Haunted Gallery" aesthetic (Jean's layout + Giesecke's texture) is the approved direction.
+- [ ] **Lock in Sitemap:** Confirm the sitemap is **PORTFOLIO (Homepage) | ABOUT | CONTACT**.
+- [ ] **Select Final Font:** Confirm **"Special Elite"** is the chosen font for all stylized text.
+- [ ] **Gather Homepage Assets:**
+    - [ ] Get the **single, highest-resolution** original file for every painting that will be in the homepage carousel.
+- [ ] **Gather About Page Assets:**
+    - [ ] Get the final, written **Artist Bio / Statement**.
+    - [ ] Get the final **Resume / CV** text.
+    - [ ] Get a professional, high-resolution **artist headshot**.
+    - [ ] Get the final **animation file** for a performance audit.
+- [ ] **Gather Contact Page Assets:**
+    - [ ] Get the professional email address where inquiries should be sent.
+
+---
+### **Phase 2: Technical Setup & CMS**
+
+This is the engineering backbone of the project.
+
+- [ ] **Set up Headless CMS (Sanity.io):**
+    - [ ] Create a new Sanity.io project.
+    - [ ] Define the schema for "Artwork" (fields: `title`, `image`, `year`).
+    - [ ] **Upload all the original, high-resolution painting files** to the Sanity media library. This is the "smart photo lab" that will handle optimization for us.
+- [ ] **Initialize Project Framework:**
+    - [ ] Set up a new project using a modern framework (e.g., Next.js).
+    - [ ] Connect the project to your Sanity.io backend using secure environment variables.
+- [ ] **Configure Global Styles:**
+    - [ ] Implement the "Special Elite" font for headings and UI elements.
+    - [ ] Implement the global CSS for the Giesecke-style noise overlay (`body::before`).
+
+---
+### **Phase 3: Page Construction**
+
+Build the actual pages based on our agreed-upon designs.
+
+- [ ] **Build the Homepage (Portfolio):**
+    - [ ] Create the full-screen carousel layout.
+    - [ ] Fetch artwork images and data from Sanity.io.
+    - [ ] Implement the top navigation (`PORTFOLIO | ABOUT | CONTACT`).
+    - [ ] Implement the bottom-left year filter (`WORK / 2024`), including the pop-up menu and filtering logic.
+    - [ ] Implement the left/right carousel navigation arrows.
+- [ ] **Build the About Page:**
+    - [ ] Create the layout with the artist photo, bio, animation, and CV sections.
+    - [ ] Ensure the resume section has the specified `#FBD8FF` background color.
+    - [ ] Lazy-load the animation to protect page performance.
+- [ ] **Build the Contact Page:**
+    - [ ] Create a simple, clean layout.
+    - [ ] Build a secure contact form for inquiries.
+    - [ ] Connect the form to a backend service (e.g., a serverless function) to send the emails.
+
+---
+### **Phase 4: Final Audit & Launch**
+
+The final quality check before going live.
+
+- [ ] **Performance Audit (Sudo's Checklist):**
+    - [ ] Test the site on a throttled mobile connection.
+    - [ ] Verify the homepage LCP (Largest Contentful Paint) is under 2.5 seconds.
+    - [ ] Confirm the noise overlay does not cause performance lag.
+- [ ] **Security Audit (Josue's Checklist):**
+    - [ ] Add rate-limiting and a honeypot to the contact form to prevent spam.
+    - [ ] Ensure no API keys or secrets are exposed in the frontend code.
+- [ ] **Client Handoff:**
+    - [ ] Provide the artist with her login credentials for the Sanity.io "admin mode."
+    - [ ] Give her a brief tutorial on how to upload new art and edit text.
+- [ ] **Deployment:**
+    - [ ] Deploy the final site to a hosting provider (e.g., Vercel, Netlify).
+    - [ ] Configure the custom domain.
+
+This is the entire project. Follow the checklist. Do the work.

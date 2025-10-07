@@ -1,0 +1,134 @@
+ Overall Score: 4/10
+
+  Visual Design (3/10)
+
+  - Dark theme with overlays is trendy but executed poorly - the
+  double gradient (top + bottom) creates muddy visual depth
+  - The filter: brightness(0.85) contrast(1.1) (line 47)
+  arbitrarily degrades image quality for no good reason
+  - Black background (#000) is harsh on the eyes - no
+  consideration for true dark mode best practices
+  - The zoom effect on transition (scale(1.08)) is a cliché 2015
+  Medium article effect
+
+  Typography (5/10)
+
+  - Archivo is a decent font choice
+  - Letter spacing is inconsistent: -0.03em for headers, 0.1em for
+   nav (lines 98, 111) - no clear typographic system
+  - 4rem title (line 146) is absurdly large on smaller screens
+  with no responsive scaling
+  - The uppercase everything approach (lines 98, 112, 151, 198) is
+   visually exhausting and reduces readability
+  - Line height of 0.95 (line 148) is illegibly tight
+
+  Layout & Spacing (4/10)
+
+  - Fixed positioning everywhere creates a rigid, inflexible
+  layout
+  - 3.5rem padding is arbitrary - not based on any grid system
+  - 60% max-width on title (line 142) means on wide screens you
+  waste 40% of premium real estate
+  - Thumbnail grid is fixed at 6 columns (line 229) with no logic
+  for different screen sizes
+  - Bottom UI elements (year filter + thumbnails) will collide on
+  medium-width screens
+
+  Navigation/Interaction (3/10)
+
+  - Critical flaw: Hover zones are 35% of screen width (line 270)
+  - massive dead zones for clicking
+  - Navigation arrows only appear on hover - terrible
+  discoverability, violates basic UX principles
+  - The navigation links (Work, About, Contact) don't actually go
+  anywhere (href="#") - literally non-functional
+  - Clicking thumbnails works, but they're tiny (70px) with
+  minimal touch target size
+  - Progress bar at top (line 323) is almost invisible at 2px
+  height
+
+  Accessibility (1/10)
+
+  - No ARIA labels anywhere
+  - No keyboard focus indicators (explicitly removed on lines
+  205-209) - completely breaks keyboard navigation
+  - No alt text for images - screen readers get nothing
+  - Insufficient color contrast - rgba(255,255,255,0.6) on nav
+  links likely fails WCAG AA
+  - No skip links or semantic HTML structure
+  - Removed focus outlines - hostile to keyboard users
+  - Cursor changes (w-resize, e-resize on lines 277, 282) are
+  semantically incorrect
+
+  Responsive Design (2/10)
+
+  - overflow: hidden on body (line 24) with fixed heights -
+  guaranteed to break on mobile
+  - Zero media queries - this will be catastrophic on phones
+  - Fixed pixel values everywhere: 70px thumbnails, 4rem titles,
+  3.5rem padding
+  - 6-column thumbnail grid will be microscopic on mobile
+  - Hover interactions are completely useless on touch devices
+
+  Performance (6/10)
+
+  - Preloading all images (lines 423-426) is good
+  - But loading from Unsplash with q=80&w=2000 for every image is
+  bandwidth-heavy
+  - No lazy loading for thumbnails
+  - Multiple Google Fonts weights (400, 600, 900) when you could
+  subset
+  - No image format optimization (WebP, AVIF)
+  - Backdrop-filter (line 300) is expensive on mobile GPUs
+
+  User Experience Flow (4/10)
+
+  - Auto-playing portfolio galleries are annoying - user has no
+  control
+  - Year filtering is decent but buttons have no visual separation
+   (gap: 0 on line 186)
+  - Active states on year filter are subtle
+  - No indication of total number of images
+  - No way to pause/stop the interaction
+  - Clicking on large hover zones instead of clear buttons is
+  unintuitive
+
+  Content Strategy (5/10)
+
+  - Artist name and work titles are good
+  - Metadata (year + medium) is useful
+  - But the navigation links are fake (#) which is unprofessional
+  - No actual content - just placeholder Unsplash images
+  - No about/bio, no project descriptions beyond title
+
+  Technical Implementation (5/10)
+
+  - Clean vanilla JS, no framework bloat (good)
+  - But the isTransitioning flag (line 409) is a crude debounce
+  - Hardcoded gallery array instead of API/CMS integration
+  - Magic number timeouts (1000ms, 300ms) scattered throughout
+  - No error handling for failed image loads
+  - data:, favicon (line 8) is lazy
+
+  ---
+  Fatal Flaws:
+
+  1. Completely unusable on mobile - no responsive design
+  whatsoever
+  2. Accessibility nightmare - actively hostile to keyboard/screen
+   reader users
+  3. Fake navigation - links go nowhere
+  4. Poor interaction design - hidden controls, massive hover
+  zones
+
+  What It Does Right:
+
+  - Preloads images
+  - Smooth transitions
+  - Year filtering works
+  - Clean code structure
+
+  This feels like a Dribbble shot made real without considering
+  actual users. It prioritizes aesthetics over usability and
+  completely ignores mobile, accessibility, and real-world usage
+  patterns. Would not pass any serious design review.
