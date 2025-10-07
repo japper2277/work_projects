@@ -1,0 +1,1157 @@
+/* ====================================
+   CSS Reset and Basic Setup
+   ==================================== */
+:root {
+    --accent-color: #C4364A;
+    --accent-hover: #D64A5E;
+    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #111;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ====================================
+   Noise Overlay Effect
+   ==================================== */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+}
+
+/* ====================================
+   Accessibility
+   ==================================== */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 16px;
+    background: #fff;
+    color: #111;
+    padding: 12px 24px;
+    text-decoration: none;
+    z-index: 10000;
+    font-weight: bold;
+}
+
+.skip-link:focus {
+    top: 16px;
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ====================================
+   Main Container (Hero Section)
+   ==================================== */
+.fullscreen-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: pan-y;
+    cursor: grab;
+}
+
+.fullscreen-container.dragging {
+    cursor: grabbing;
+}
+
+/* ====================================
+   Dual-Layer Background (Crossfade)
+   ==================================== */
+.background-image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    opacity: 0;
+    transition: opacity 1.2s var(--transition-smooth);
+    will-change: opacity, transform;
+}
+
+.bg-image.visible {
+    opacity: 1;
+}
+
+/* Ken Burns Effect - Subtle zoom/pan animation */
+@keyframes kenburns {
+    0% {
+        transform: scale(1) translate(0, 0);
+    }
+    100% {
+        transform: scale(1.05) translate(-1%, 1%);
+    }
+}
+
+.bg-image.visible {
+    animation: kenburns 45s infinite alternate ease-in-out;
+}
+
+/* Disable Ken Burns when dragging */
+.fullscreen-container.dragging .bg-image {
+    animation: none;
+}
+
+/* ====================================
+   Preview Images (for drag effect)
+   ==================================== */
+.preview-image {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    opacity: 1;
+    pointer-events: none;
+    z-index: 0;
+    transition: none;
+    will-change: transform;
+}
+
+.preview-image.prev {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.preview-image.next {
+    left: 0;
+    transform: translateX(100%);
+}
+
+.preview-image.snapping {
+    transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ====================================
+   Loading Overlay with Blur Effect
+   ==================================== */
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    z-index: 200;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-blur {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px);
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.loading-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.loading-text {
+    color: #fff;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+}
+
+.loading-hint {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+}
+
+.loading-hint kbd {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 4px 8px;
+    border-radius: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+/* ====================================
+   Header Navigation
+   ==================================== */
+.main-header {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+}
+
+.artist-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.artist-name {
+    font-weight: bold;
+}
+
+.artist-title {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.15em;
+}
+
+.artist-info:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+.main-header nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.main-header nav a {
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    position: relative;
+}
+
+.main-header nav a:hover {
+    opacity: 0.7;
+}
+
+.main-header nav a:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+/* Shop link emphasis */
+.main-header nav a.shop-link {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.main-header nav a.shop-link:hover {
+    color: var(--accent-hover);
+    opacity: 1;
+}
+
+/* Gallery hint button */
+.gallery-hint {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    height: 44px;
+    padding: 0 15px;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.4s var(--transition-smooth);
+    font-family: 'Special Elite', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.gallery-hint:hover {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: var(--accent-color);
+    color: #fff;
+}
+
+.gallery-hint:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+.hint-icon {
+    flex-shrink: 0;
+    transition: all 0.4s var(--transition-smooth);
+}
+
+.hint-text {
+    display: inline-block;
+    max-width: 0;
+    opacity: 0;
+    transition: all 0.4s var(--transition-smooth);
+    overflow: hidden;
+}
+
+.gallery-hint:hover .hint-text {
+    max-width: 200px;
+    opacity: 1;
+}
+
+.gallery-hint:hover .hint-text::before {
+    content: "OPEN GALLERY";
+}
+
+/* ====================================
+   Image Title and Metadata
+   ==================================== */
+.image-title {
+    position: absolute;
+    bottom: 3rem;
+    left: 3rem;
+    right: 3rem;
+    z-index: 50;
+    max-width: 800px;
+}
+
+.image-title h1 {
+    font-family: 'Geist', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+}
+
+.image-title h1.visible {
+    opacity: 1;
+}
+
+.image-meta {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.image-meta.visible {
+    opacity: 1;
+}
+
+.title-link,
+.meta-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.title-link:hover,
+.meta-link:hover {
+    opacity: 0.7;
+}
+
+.title-link:focus-visible,
+.meta-link:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+.image-title:hover .title-link,
+.image-title:hover .meta-link {
+    opacity: 0.7;
+}
+
+/* Inquire Button */
+.inquire-button {
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-family: 'Special Elite', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.inquire-button:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(196, 54, 74, 0.4);
+}
+
+.inquire-button:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+/* ====================================
+   Carousel Navigation with Custom Cursors
+   ==================================== */
+.hover-zone {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 95;
+    pointer-events: none;
+}
+
+.hover-zone.left {
+    left: 0;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="white" stroke="black" stroke-width="1" d="M20 8 L10 16 L20 24"/></svg>') 16 16, w-resize;
+}
+
+.hover-zone.right {
+    right: 0;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="white" stroke="black" stroke-width="1" d="M12 8 L22 16 L12 24"/></svg>') 16 16, e-resize;
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    z-index: 96;
+    pointer-events: none;
+}
+
+.carousel-nav button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 3rem;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: auto;
+    padding: 0 2rem;
+    font-family: inherit;
+}
+
+.carousel-nav button:hover,
+.carousel-nav button.visible {
+    opacity: 1;
+}
+
+.carousel-nav button:hover {
+    transform: scale(1.2);
+}
+
+.carousel-nav button:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+/* ====================================
+   Error States
+   ==================================== */
+.error-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(17, 17, 17, 0.95);
+    padding: 2rem;
+    border: 2px solid #ff0000;
+    color: #ff6666;
+    display: none;
+    z-index: 200;
+    text-align: center;
+    max-width: 90vw;
+}
+
+.error-message.show {
+    display: block;
+}
+
+.error-message h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.error-retry {
+    margin-top: 1rem;
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-family: 'Special Elite', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    border-radius: 0;
+    transition: background 0.3s ease;
+}
+
+.error-retry:hover {
+    background: var(--accent-hover);
+}
+
+/* ====================================
+   Contextual Tips
+   ==================================== */
+.contextual-tip {
+    position: fixed;
+    top: 5rem;
+    right: 2rem;
+    background: rgba(17, 17, 17, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 1.5rem;
+    z-index: 250;
+    display: none;
+    max-width: 300px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.contextual-tip.show {
+    display: block;
+}
+
+.contextual-tip-close {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    float: right;
+    margin-left: 1rem;
+    font-size: 1.2rem;
+}
+
+/* ====================================
+   Command Bar Gallery (Enhanced)
+   ==================================== */
+.command-bar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.command-bar-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.command-bar-content {
+    width: 90%;
+    max-width: 1200px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 2rem;
+}
+
+.command-bar-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.command-bar-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.command-bar-content::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 0;
+}
+
+.command-bar-content::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
+}
+
+.command-bar-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.1em;
+}
+
+.thumbnail-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 200px);
+    gap: 1rem;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.thumbnail-item {
+    position: relative;
+    width: 200px;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 0;
+    border: 2px solid transparent;
+    transition: all 0.3s var(--transition-smooth);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.thumbnail-item:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.thumbnail-item:focus-visible {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 4px;
+}
+
+.thumbnail-item.current {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 20px rgba(196, 54, 74, 0.4);
+}
+
+.thumbnail-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.thumbnail-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.5rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.thumbnail-item:hover .thumbnail-info,
+.thumbnail-item.current .thumbnail-info {
+    opacity: 1;
+}
+
+/* ====================================
+   Toast Notifications
+   ==================================== */
+#toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(17, 17, 17, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 1.5rem;
+    z-index: 9000;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#toast.show {
+    opacity: 1;
+}
+
+#toast kbd {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 4px 8px;
+    border-radius: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+/* ====================================
+   Content Wrapper (Scrollable Sections)
+   ==================================== */
+.content-wrapper {
+    position: relative;
+    background: #0a0a0a;
+    z-index: 10;
+}
+
+/* ====================================
+   Portfolio Grid Section
+   ==================================== */
+.portfolio-section {
+    padding: 4rem 2rem;
+    min-height: 100vh;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+.section-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.grid-item {
+    position: relative;
+    overflow: hidden;
+    background: #1a1a1a;
+    transition: transform 0.3s var(--transition-smooth);
+}
+
+.grid-item:hover {
+    transform: translateY(-8px);
+}
+
+.grid-item a {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+}
+
+.grid-item img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s var(--transition-smooth);
+}
+
+.grid-item:hover img {
+    transform: scale(1.05);
+}
+
+.grid-item-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%);
+    transform: translateY(100%);
+    transition: transform 0.3s var(--transition-smooth);
+}
+
+.grid-item:hover .grid-item-overlay {
+    transform: translateY(0);
+}
+
+.grid-item-overlay h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.grid-item-overlay p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.1em;
+}
+
+/* ====================================
+   About Section
+   ==================================== */
+.about-section {
+    padding: 6rem 2rem;
+    background: #111;
+}
+
+.about-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.artist-photo-container {
+    position: sticky;
+    top: 2rem;
+}
+
+.artist-photo {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.artist-bio h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+}
+
+.artist-bio p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 1.5rem;
+}
+
+.bio-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    color: #fff;
+    border: 2px solid var(--accent-color);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(196, 54, 74, 0.4);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* ====================================
+   Contact Section
+   ==================================== */
+.contact-section {
+    padding: 6rem 2rem;
+    background: #0a0a0a;
+    text-align: center;
+}
+
+.contact-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.contact-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+}
+
+.contact-intro {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+}
+
+.email-link {
+    display: inline-block;
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    transition: color 0.3s ease;
+}
+
+.email-link:hover {
+    color: var(--accent-hover);
+}
+
+.social-links {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.social-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #fff;
+}
+
+/* ====================================
+   Footer
+   ==================================== */
+.site-footer {
+    padding: 2rem;
+    background: #111;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.site-footer p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+.footer-credit a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.footer-credit a:hover {
+    color: var(--accent-hover);
+}
+
+/* ====================================
+   Mobile Responsive
+   ==================================== */
+@media (max-width: 768px) {
+    .fullscreen-container {
+        height: 100vh;
+    }
+
+    .main-header {
+        flex-direction: column;
+        gap: 1rem;
+        font-size: 0.9rem;
+        padding: 1rem;
+        top: 1rem;
+        left: 1rem;
+        right: 1rem;
+    }
+
+    .main-header nav {
+        gap: 1rem;
+        font-size: 0.8rem;
+    }
+
+    .gallery-hint {
+        bottom: 1rem;
+        right: 1rem;
+        height: 38px;
+        padding: 0 12px;
+        font-size: 0.75rem;
+        gap: 6px;
+    }
+
+    .hint-icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .image-title {
+        bottom: 1.5rem;
+        left: 1.5rem;
+        right: 1.5rem;
+    }
+
+    .carousel-nav button {
+        opacity: 0.6;
+        font-size: 2rem;
+        padding: 0 1rem;
+    }
+
+    .contextual-tip {
+        top: auto;
+        bottom: 6rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+        font-size: 0.8rem;
+    }
+
+    .thumbnail-grid {
+        grid-template-columns: repeat(3, 120px);
+        gap: 0.75rem;
+    }
+
+    .thumbnail-item {
+        width: 120px;
+    }
+
+    .command-bar-content {
+        padding: 1rem;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .artist-photo-container {
+        position: relative;
+        top: 0;
+    }
+
+    .bio-actions {
+        flex-direction: column;
+    }
+
+    .social-links {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .thumbnail-grid {
+        grid-template-columns: repeat(4, 200px);
+    }
+}
+
+@media (max-width: 1024px) {
+    .thumbnail-grid {
+        grid-template-columns: repeat(4, 150px);
+    }
+
+    .thumbnail-item {
+        width: 150px;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .thumbnail-grid {
+        grid-template-columns: repeat(2, 100px);
+        gap: 0.5rem;
+    }
+
+    .thumbnail-item {
+        width: 100px;
+    }
+}
+
+/* ====================================
+   Reduced Motion
+   ==================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .bg-image.visible {
+        animation: none !important;
+    }
+}

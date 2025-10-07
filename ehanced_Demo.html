@@ -1,0 +1,429 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anjelina Villalobos | Portfolio Demo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+            --font-special: 'Special Elite', cursive;
+            --color-primary: #ffffff;
+            --color-secondary: #a0a0a0;
+            --color-background: #111111;
+            --color-accent: #c2a385; /* A subtle, classy accent color */
+        }
+
+        /* --- Basic Reset & Body --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--color-background);
+            color: var(--color-primary);
+            font-family: var(--font-body);
+            line-height: 1.6;
+        }
+
+        /* --- Fullscreen Hero Container (Your original concept, enhanced) --- */
+        .fullscreen-container {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1543185377-99cd16d338ce?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=3600');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Main Header (Stays at the top) */
+        .main-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 3rem;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+        }
+
+        .artist-info .artist-name {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .artist-info .artist-title {
+            font-family: var(--font-special);
+            font-size: 0.8rem;
+            color: var(--color-secondary);
+            text-transform: uppercase;
+        }
+        
+        .main-header nav a {
+            color: var(--color-primary);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .main-header nav a:hover {
+            color: var(--color-accent);
+        }
+
+        /* Main Image Title & Meta */
+        .image-title {
+            max-width: 800px;
+        }
+        
+        .image-title h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            color: var(--color-primary);
+            margin: 0;
+            line-height: 1.1;
+        }
+        
+        .image-title .image-meta {
+            font-family: var(--font-body);
+            color: var(--color-secondary);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        
+        /* NEW: Inquire Button (Inspired by Simkins/Kawasaki) */
+        .inquire-button {
+            background-color: transparent;
+            border: 1px solid var(--color-secondary);
+            color: var(--color-primary);
+            padding: 0.75rem 1.5rem;
+            margin-top: 2rem;
+            font-family: var(--font-body);
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .inquire-button:hover {
+            background-color: var(--color-primary);
+            color: var(--color-background);
+            border-color: var(--color-primary);
+        }
+
+        /* --- Content Wrapper (For sections below the hero) --- */
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 3rem;
+        }
+
+        section {
+            margin-bottom: 8rem;
+        }
+
+        h2.section-title {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: var(--color-primary);
+        }
+
+        /* --- 1. MUSEUM CATALOG / PORTFOLIO SECTION (Inspired by Arsham) --- */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .grid-item {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 4 / 5; /* Maintain consistent shape */
+        }
+        
+        .grid-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .grid-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .grid-item:hover .grid-item-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .grid-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .grid-item-overlay h3 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+        }
+        
+        .grid-item-overlay p {
+            color: var(--color-secondary);
+        }
+
+
+        /* --- 2. ABOUT SECTION --- */
+        .about-section {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+        
+        .artist-photo {
+            flex-shrink: 0;
+            width: 300px;
+            height: 380px;
+            object-fit: cover;
+        }
+        
+        .artist-bio h3 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .artist-bio p {
+            color: var(--color-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .cv-link {
+            display: inline-block;
+            color: var(--color-accent);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .cv-link:hover {
+            border-color: var(--color-accent);
+        }
+
+        /* --- 3. CONTACT SECTION --- */
+        .contact-section {
+            text-align: center;
+        }
+        
+        .contact-section p {
+            font-size: 1.2rem;
+            color: var(--color-secondary);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+        
+        .email-link {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .email-link:hover {
+            color: var(--color-accent);
+        }
+        
+        .social-links {
+            margin-top: 3rem;
+        }
+        
+        .social-links a {
+            color: var(--color-secondary);
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--color-primary);
+        }
+        
+        /* --- FOOTER --- */
+        .main-footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--color-secondary);
+            font-size: 0.8rem;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="fullscreen-container" id="home">
+
+        <header class="main-header" role="banner">
+            <div class="artist-info">
+                <div class="artist-name">Anjelina Villalobos</div>
+                <div class="artist-title">ARTIST / PAINTER</div>
+            </div>
+            <nav role="navigation" aria-label="Main navigation">
+                <a href="#portfolio">PORTFOLIO</a>
+                <a href="#">SHOP</a>
+                <a href="#about">ABOUT</a>
+                <a href="#contact">CONTACT</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="image-title">
+                <h1>The Veiled Garden</h1>
+                <div class="image-meta">Oil on Canvas, 48" x 60", 2025</div>
+                <button class="inquire-button">INQUIRE ABOUT ORIGINAL</button>
+            </div>
+        </main>
+
+        </div>
+
+    <div class="content-wrapper">
+
+        <section id="portfolio">
+            <h2 class="section-title">Portfolio</h2>
+            <div class="portfolio-grid">
+                
+                <article class="grid-item">
+                    <a href="#piece-1">
+                        <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" alt="Celestial Drift">
+                        <div class="grid-item-overlay">
+                            <h3>Celestial Drift</h3>
+                            <p>2024</p>
+                        </div>
+                    </a>
+                </article>
+
+                <article class="grid-item">
+                    <a href="#piece-2">
+                        <img src="https://images.unsplash.com/photo-1579783900882-c0d3d5a13f21?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" alt="Crimson Bloom">
+                        <div class="grid-item-overlay">
+                            <h3>Crimson Bloom</h3>
+                            <p>2024</p>
+                        </div>
+                    </a>
+                </article>
+
+                <article class="grid-item">
+                    <a href="#piece-3">
+                        <img src="https://images.unsplash.com/photo-1555656255-c24b238a0f12?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" alt="Ephemeral Echo">
+                        <div class="grid-item-overlay">
+                            <h3>Ephemeral Echo</h3>
+                            <p>2023</p>
+                        </div>
+                    </a>
+                </article>
+
+                <article class="grid-item">
+                    <a href="#piece-4">
+                        <img src="https://images.unsplash.com/photo-1547891654-e66ed7ebb968?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" alt="Studio Light">
+                        <div class="grid-item-overlay">
+                            <h3>Studio Light</h3>
+                            <p>2023</p>
+                        </div>
+                    </a>
+                </article>
+
+                 <article class="grid-item">
+                    <a href="#piece-5">
+                        <img src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" alt="Galactic Tide">
+                        <div class="grid-item-overlay">
+                            <h3>Galactic Tide</h3>
+                            <p>2022</p>
+                        </div>
+                    </a>
+                </article>
+
+                 <article class="grid-item">
+                    <a href="#piece-6">
+                        <img src="https://images.unsplash.com/photo-1580136579324-f2416bfe3383?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" alt="Portrait in Blue">
+                        <div class="grid-item-overlay">
+                            <h3>Portrait in Blue</h3>
+                            <p>2022</p>
+                        </div>
+                    </a>
+                </article>
+                
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="about-section">
+                <img src="https://images.unsplash.com/photo-1581094723023-08deed319b0a?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" alt="Photo of the artist, Anjelina Villalobos" class="artist-photo">
+                <div class="artist-bio">
+                    <h3>About the Artist</h3>
+                    <p>Anjelina Villalobos is an American painter whose work explores the complex interplay between nature's organic forms and the surreal landscapes of the human psyche. Her meticulous attention to detail and command of color create immersive worlds that are both familiar and fantastical.</p>
+                    <p>She has been featured in publications like Hi-Fructose and Juxtapoz, with solo shows in New York, Los Angeles, and London.</p>
+                    <a href="#" class="cv-link">VIEW FULL CURRICULUM VITAE</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2 class="section-title">Get In Touch</h2>
+            <p>For commissions, press inquiries, or to be added to the private mailing list for upcoming shows and available work, please reach out directly.</p>
+            <a href="mailto:contact@anjelinavillalobos.com" class="email-link">contact@anjelinavillalobos.com</a>
+            <div class="social-links">
+                <a href="#" target="_blank">INSTAGRAM</a>
+                <a href="#" target="_blank">ARTSY</a>
+                <a href="#" target="_blank">TWITTER</a>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 Anjelina Villalobos. All Rights Reserved. Site by Jared Apper.</p>
+    </footer>
+
+</body>
+</html>
+``` 

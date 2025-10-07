@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="referrer" content="no-referrer">
+    <meta name="description" content="Anjelina Villalobos - Digital Artist Portfolio">
+    <meta name="author" content="Jared Apper">
+    <meta name="theme-color" content="#111111">
+    <title>Anjelina Villalobos | Portfolio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/enhanced-portfolio.css">
+</head>
+<body>
+    <a href="#main-image" class="skip-link">Skip to gallery</a>
+
+    <!-- Hero Section: Full-screen Image Viewer -->
+    <div class="fullscreen-container" id="container">
+
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-blur" id="loadingBlur"></div>
+            <div class="loading-content">
+                <div class="loading-text">LOADING...</div>
+                <div class="loading-hint">Pro tip: Press <kbd>G</kbd> for gallery view</div>
+            </div>
+        </div>
+
+        <!-- Dual-layer background for crossfade -->
+        <div class="background-image-container">
+            <div class="bg-image" id="bgImage1" role="img" aria-label=""></div>
+            <div class="bg-image" id="bgImage2" role="img" aria-label=""></div>
+        </div>
+
+        <div class="preview-image prev" id="prevPreview"></div>
+        <div class="preview-image next" id="nextPreview"></div>
+
+        <header class="main-header" role="banner">
+            <div class="artist-info" tabindex="0">
+                <div class="artist-name">Anjelina Villalobos</div>
+                <div class="artist-title">ARTIST / PAINTER</div>
+            </div>
+            <nav role="navigation" aria-label="Main navigation">
+                <a href="#home">HOME</a>
+                <a href="#portfolio">PORTFOLIO</a>
+                <a href="#shop" class="shop-link">SHOP</a>
+                <a href="#about">ABOUT</a>
+                <a href="#contact">CONTACT</a>
+            </nav>
+        </header>
+
+        <div class="error-message" id="errorMessage" role="alert" aria-live="assertive">
+            <h3>FAILED TO LOAD IMAGE</h3>
+            <p>Please check your connection and try again.</p>
+            <button class="error-retry" id="errorRetry">RETRY</button>
+        </div>
+
+        <div class="hover-zone left" aria-hidden="true"></div>
+        <div class="hover-zone right" aria-hidden="true"></div>
+
+        <div class="carousel-nav">
+            <button class="prev" aria-label="Previous image">&lt;</button>
+            <button class="next" aria-label="Next image">&gt;</button>
+        </div>
+
+        <main id="main-image">
+            <div class="image-title">
+                <a href="#portfolio" class="title-link">
+                    <h1 id="imgTitle"></h1>
+                </a>
+                <a href="#portfolio" class="meta-link">
+                    <div class="image-meta" id="imgMeta"></div>
+                </a>
+                <button class="inquire-button" id="inquireBtn" style="display: none;">INQUIRE ABOUT ORIGINAL</button>
+            </div>
+        </main>
+
+        <button class="gallery-hint" id="galleryHint" aria-label="Open gallery overview" title="Gallery Overview">
+            <svg class="hint-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="9" y="0" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="0" y="9" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="9" y="9" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <span class="hint-text"></span>
+        </button>
+
+        <div class="contextual-tip" id="contextualTip">
+            <button class="contextual-tip-close" id="contextualTipClose">×</button>
+            <span id="contextualTipText">Press ← → to navigate images</span>
+        </div>
+
+    </div>
+
+    <!-- Scrollable Content Sections -->
+    <div class="content-wrapper">
+
+        <!-- Portfolio Grid Section -->
+        <section id="portfolio" class="portfolio-section">
+            <div class="section-header">
+                <h2>Portfolio</h2>
+                <p class="section-subtitle">Click any piece to view in full screen</p>
+            </div>
+            <div class="portfolio-grid" id="portfolioGrid">
+                <!-- Grid items will be dynamically generated -->
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="about-content">
+                <div class="artist-photo-container">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&fm=webp" alt="Anjelina Villalobos" class="artist-photo">
+                </div>
+                <div class="artist-bio">
+                    <h2>About Anjelina</h2>
+                    <p>Anjelina Villalobos is a contemporary artist whose work explores the intersection of abstract expressionism and digital media. Her pieces challenge traditional boundaries between painting and technology.</p>
+                    <p>With a background in fine arts and a passion for experimentation, Anjelina creates immersive visual experiences that invite viewers to explore color, form, and emotion.</p>
+                    <p>Her work has been featured in galleries across the United States and internationally, earning recognition for its bold use of color and innovative techniques.</p>
+                    <div class="bio-actions">
+                        <a href="#contact" class="btn-primary">Get In Touch</a>
+                        <a href="/cv.pdf" class="btn-secondary">Download CV</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="contact-content">
+                <h2>Get In Touch</h2>
+                <p class="contact-intro">For commissions, inquiries, or to say hello.</p>
+                <a href="mailto:contact@anjelinavillalobos.com" class="email-link">contact@anjelinavillalobos.com</a>
+                <div class="social-links">
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <p>&copy; 2024 Anjelina Villalobos. All rights reserved.</p>
+            <p class="footer-credit">Site by <a href="https://github.com/jaredapper">Jared Apper</a></p>
+        </footer>
+
+    </div>
+
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true" id="announcer"></div>
+
+    <div id="toast">Pro Tip: Press <kbd>G</kbd> to view the full gallery.</div>
+
+    <!-- Command Bar Gallery -->
+    <div class="command-bar-overlay" id="commandBar" role="dialog" aria-label="Gallery overview" aria-modal="true">
+        <div class="command-bar-content">
+            <div class="command-bar-header">
+                <p>GALLERY / Press <kbd>Esc</kbd> or <kbd>G</kbd> to close</p>
+            </div>
+            <div class="thumbnail-grid" id="thumbnailGrid" role="grid"></div>
+        </div>
+    </div>
+
+    <script src="scripts/enhanced-portfolio.js"></script>
+
+</body>
+</html>

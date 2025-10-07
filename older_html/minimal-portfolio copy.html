@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="referrer" content="no-referrer">
+    <meta name="description" content="Anjelina Villalobos - Digital Artist Portfolio">
+    <meta name="theme-color" content="#111111">
+    <title>Anjelina Villalobos | Portfolio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS Reset and Basic Setup */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #111;
+            color: #fff;
+            font-family: 'Special Elite', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Persistent full-screen noise overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+        }
+
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 16px;
+            background: #fff;
+            color: #111;
+            padding: 12px 24px;
+            text-decoration: none;
+            z-index: 10000;
+            font-weight: bold;
+        }
+
+        .skip-link:focus {
+            top: 16px;
+            outline: 3px solid #fff;
+            outline-offset: 3px;
+        }
+
+        /* The main container */
+        .fullscreen-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: pan-y;
+        }
+
+        /* The background image */
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            z-index: 1;
+            animation: heroZoom 30s ease-in-out infinite alternate;
+            opacity: 0;
+            transform: scale(1);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.5s ease;
+            filter: blur(0px);
+        }
+
+        .background-image.loaded {
+            opacity: 1;
+        }
+
+        .background-image.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+
+        .background-image.loading-blur {
+            filter: blur(20px);
+            transform: scale(1.1);
+        }
+
+        /* The noise overlay */
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* The main header */
+        .main-header {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            right: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .artist-name {
+            font-weight: bold;
+        }
+
+        .artist-name:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 4px;
+        }
+
+        .main-header nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .main-header nav a {
+            color: #fff;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .main-header nav a:hover {
+            opacity: 0.7;
+        }
+
+        .main-header nav a:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 4px;
+        }
+
+        /* Image title overlay */
+        .image-title {
+            position: absolute;
+            bottom: 8rem;
+            left: 2rem;
+            right: 2rem;
+            z-index: 50;
+            max-width: 800px;
+        }
+
+        .image-title h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
+        }
+
+        .image-title h1.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .image-meta {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease 0.3s, transform 0.3s ease 0.3s;
+        }
+
+        .image-meta.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Year filter buttons */
+        .year-filter {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 100;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .year-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Special Elite', monospace;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0.5rem 0;
+        }
+
+        .year-btn:hover {
+            color: #fff;
+        }
+
+        .year-btn:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 4px;
+        }
+
+        .year-btn.active {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* Hover zones */
+        .hover-zone {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            z-index: 95;
+            cursor: pointer;
+        }
+
+        .hover-zone.left { left: 0; }
+        .hover-zone.right { right: 0; }
+
+        /* Carousel navigation arrows */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 96;
+            pointer-events: none;
+        }
+
+        .carousel-nav button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+            padding: 0 2rem;
+            font-family: inherit;
+        }
+
+        .carousel-nav button.visible {
+            opacity: 1;
+        }
+
+        .carousel-nav button:hover {
+            transform: scale(1.2);
+        }
+
+        .carousel-nav button:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 4px;
+        }
+
+        /* Error message */
+        .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(17, 17, 17, 0.95);
+            padding: 2rem;
+            border: 2px solid #ff0000;
+            color: #ff6666;
+            display: none;
+            z-index: 200;
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .error-message h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .error-retry {
+            margin-top: 1rem;
+            background: #fff;
+            color: #111;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+        }
+
+        .error-retry:hover {
+            opacity: 0.8;
+        }
+
+        /* Empty state */
+        .empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 150;
+            display: none;
+            max-width: 400px;
+            padding: 2rem;
+        }
+
+        .empty-state.show {
+            display: block;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state-btn {
+            background: #fff;
+            color: #111;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+        }
+
+        .empty-state-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Contextual tip */
+        .contextual-tip {
+            position: fixed;
+            top: 5rem;
+            right: 2rem;
+            background: rgba(17, 17, 17, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 1.5rem;
+            z-index: 250;
+            display: none;
+            max-width: 300px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .contextual-tip.show {
+            display: block;
+        }
+
+        .contextual-tip-close {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            float: right;
+            margin-left: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Screen reader only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Keyframe animations */
+        @keyframes heroZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            body, html {
+                overflow-y: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .fullscreen-container {
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .background-image {
+                position: fixed;
+            }
+
+            .noise-overlay {
+                position: fixed;
+            }
+
+            .main-header {
+                position: sticky;
+                flex-direction: row;
+                font-size: 0.9rem;
+                padding: 1rem;
+            }
+
+            .main-header nav {
+                gap: 1rem;
+            }
+
+            .image-title {
+                position: relative;
+                bottom: auto;
+                margin-top: 40vh;
+                margin-bottom: 2rem;
+                left: 1rem;
+                right: 1rem;
+            }
+
+            .year-filter {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                margin: 2rem 1rem;
+                flex-wrap: wrap;
+            }
+
+            .hover-zone, .carousel-nav {
+                display: none;
+            }
+
+            .contextual-tip {
+                display: none !important;
+            }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <a href="#main-image" class="skip-link">Skip to gallery</a>
+
+    <div class="fullscreen-container" id="container">
+
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-text">LOADING...</div>
+        </div>
+
+        <div class="background-image" id="backgroundImage" role="img" aria-label=""></div>
+
+        <div class="noise-overlay"></div>
+
+        <header class="main-header" role="banner">
+            <div class="artist-name" tabindex="0">Anjelina Villalobos</div>
+            <nav role="navigation" aria-label="Main navigation">
+                <a href="#portfolio">PORTFOLIO</a>
+                <a href="#about">ABOUT</a>
+                <a href="#contact">CONTACT</a>
+            </nav>
+        </header>
+
+        <div class="error-message" id="errorMessage" role="alert" aria-live="assertive">
+            <h3>FAILED TO LOAD IMAGE</h3>
+            <p>Please check your connection and try again.</p>
+            <button class="error-retry" id="errorRetry">RETRY</button>
+        </div>
+
+        <div class="hover-zone left" aria-hidden="true"></div>
+        <div class="hover-zone right" aria-hidden="true"></div>
+
+        <div class="carousel-nav" aria-hidden="true">
+            <button class="prev" aria-label="Previous image">&lt;</button>
+            <button class="next" aria-label="Next image">&gt;</button>
+        </div>
+
+        <main id="main-image">
+            <div class="image-title">
+                <h1 id="imgTitle"></h1>
+                <div class="image-meta" id="imgMeta"></div>
+            </div>
+
+            <footer class="year-filter" role="group" aria-label="Filter by year">
+                <button class="year-btn active" data-year="all" aria-pressed="true">ALL</button>
+                <button class="year-btn" data-year="2024" aria-pressed="false">2024</button>
+                <button class="year-btn" data-year="2023" aria-pressed="false">2023</button>
+                <button class="year-btn" data-year="2022" aria-pressed="false">2022</button>
+            </footer>
+        </main>
+
+        <div class="empty-state" id="emptyState">
+            <h3>NO IMAGES FOUND</h3>
+            <p>There are no images matching the selected year filter.</p>
+            <button class="empty-state-btn" id="emptyStateBtn">VIEW ALL IMAGES</button>
+        </div>
+
+        <div class="contextual-tip" id="contextualTip">
+            <button class="contextual-tip-close" id="contextualTipClose">×</button>
+            <span id="contextualTipText">Press ← → to navigate images</span>
+        </div>
+
+    </div>
+
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true" id="announcer"></div>
+
+    <script>
+        // DOM elements
+        const leftZone = document.querySelector('.hover-zone.left');
+        const rightZone = document.querySelector('.hover-zone.right');
+        const prevButton = document.querySelector('.carousel-nav .prev');
+        const nextButton = document.querySelector('.carousel-nav .next');
+        const backgroundImage = document.getElementById('backgroundImage');
+        const imgTitle = document.getElementById('imgTitle');
+        const imgMeta = document.getElementById('imgMeta');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorRetry = document.getElementById('errorRetry');
+        const announcer = document.getElementById('announcer');
+        const container = document.getElementById('container');
+        const emptyState = document.getElementById('emptyState');
+        const emptyStateBtn = document.getElementById('emptyStateBtn');
+        const contextualTip = document.getElementById('contextualTip');
+        const contextualTipClose = document.getElementById('contextualTipClose');
+
+        // Gallery data
+        const gallery = [
+            { year: 2024, image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1920&fm=webp', title: 'down (iteration 3)', medium: 'Acrylic on Loose Canvas, 11.5 x 16 inches', thumb: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=300&fm=webp' },
+            { year: 2024, image: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=1920&fm=webp', title: 'Urban Dreams', medium: 'Oil on Canvas, 30 x 40 inches', thumb: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=300&fm=webp' },
+            { year: 2024, image: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1920&fm=webp', title: 'Abstract Motion', medium: 'Mixed Media on Panel, 24 x 36 inches', thumb: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=300&fm=webp' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=1920&fm=webp', title: 'Neon Nights', medium: 'Acrylic on Canvas, 48 x 60 inches', thumb: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=300&fm=webp' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1920&fm=webp', title: 'Chromatic Study', medium: 'Watercolor on Paper, 18 x 24 inches', thumb: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=300&fm=webp' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1920&fm=webp', title: 'Celestial Forms', medium: 'Oil on Linen, 36 x 48 inches', thumb: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=300&fm=webp' },
+            { year: 2023, image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1920&fm=webp', title: 'Digital Landscape', medium: 'Acrylic on Wood Panel, 20 x 30 inches', thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?q=80&w=1920&fm=webp', title: 'Infinite Horizon', medium: 'Oil on Canvas, 40 x 60 inches', thumb: 'https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?q=80&w=1920&fm=webp', title: 'Gradient Space', medium: 'Mixed Media on Canvas, 32 x 44 inches', thumb: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=1920&fm=webp', title: 'Prismatic Vision', medium: 'Acrylic and Ink on Paper, 22 x 28 inches', thumb: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?q=80&w=1920&fm=webp', title: 'Color Field', medium: 'Oil on Canvas, 36 x 36 inches', thumb: 'https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?q=80&w=300&fm=webp' },
+            { year: 2022, image: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?q=80&w=1920&fm=webp', title: 'Radiant Bloom', medium: 'Acrylic on Stretched Canvas, 24 x 32 inches', thumb: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?q=80&w=300&fm=webp' }
+        ];
+
+        // State
+        let filteredGallery = [...gallery];
+        let currentIndex = 0;
+        let isTransitioning = false;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let imageViewCount = 0;
+        let hasSeenTip = localStorage.getItem('hasSeenTip') === 'true';
+
+        // Utility functions
+        function announce(message) {
+            announcer.textContent = message;
+            setTimeout(() => announcer.textContent = '', 1000);
+        }
+
+        function showContextualTip(message) {
+            if (hasSeenTip) return;
+            const tipText = document.getElementById('contextualTipText');
+            tipText.textContent = message;
+            contextualTip.classList.add('show');
+            setTimeout(() => {
+                contextualTip.classList.remove('show');
+                hasSeenTip = true;
+                localStorage.setItem('hasSeenTip', 'true');
+            }, 5000);
+        }
+
+        function updateURL() {
+            const params = new URLSearchParams(window.location.search);
+            params.set('image', currentIndex);
+            if (filteredGallery !== gallery) {
+                const activeYear = document.querySelector('.year-btn.active')?.dataset.year;
+                if (activeYear && activeYear !== 'all') params.set('year', activeYear);
+            } else {
+                params.delete('year');
+            }
+            const newURL = `${window.location.pathname}?${params.toString()}`;
+            history.pushState({ index: currentIndex }, '', newURL);
+        }
+
+        // Preload images
+        function preloadImages() {
+            const priorityImages = filteredGallery.slice(0, 3);
+            priorityImages.forEach((item, index) => {
+                const img = new Image();
+                if (index === 0) img.fetchPriority = 'high';
+                img.src = item.image;
+            });
+
+            setTimeout(() => {
+                filteredGallery.slice(3).forEach(item => {
+                    const img = new Image();
+                    img.src = item.image;
+                });
+            }, 2000);
+        }
+
+        function updateImage(index, animate = true) {
+            if (isTransitioning || index < 0 || index >= filteredGallery.length) return;
+
+            isTransitioning = true;
+            currentIndex = index;
+            const item = filteredGallery[currentIndex];
+
+            imageViewCount++;
+            if (imageViewCount === 3) {
+                showContextualTip('Press ← → to navigate images');
+            }
+
+            imgTitle.classList.remove('visible');
+            imgMeta.classList.remove('visible');
+            errorMessage.classList.remove('show');
+
+            if (animate) {
+                backgroundImage.classList.add('fade-out');
+                backgroundImage.classList.add('loading-blur');
+            }
+
+            const tempImg = new Image();
+            const loadTimeout = setTimeout(() => {
+                errorMessage.classList.add('show');
+                backgroundImage.classList.remove('loading-blur');
+                isTransitioning = false;
+            }, 10000);
+
+            tempImg.onload = () => {
+                clearTimeout(loadTimeout);
+                setTimeout(() => {
+                    backgroundImage.style.backgroundImage = `url('${item.image}')`;
+                    backgroundImage.setAttribute('aria-label', `${item.title} - ${item.medium}, ${item.year}`);
+
+                    if (animate) {
+                        backgroundImage.classList.remove('fade-out');
+                        backgroundImage.classList.remove('loading-blur');
+                    }
+                    backgroundImage.classList.add('loaded');
+
+                    imgTitle.textContent = item.title;
+                    imgMeta.innerHTML = `${item.year} · ${item.medium}`;
+
+                    setTimeout(() => {
+                        imgTitle.classList.add('visible');
+                        imgMeta.classList.add('visible');
+                    }, 100);
+
+                    updateURL();
+                    announce(`Viewing ${item.title}, image ${currentIndex + 1} of ${filteredGallery.length}`);
+
+                    isTransitioning = false;
+                }, animate ? 600 : 0);
+            };
+
+            tempImg.onerror = () => {
+                clearTimeout(loadTimeout);
+                errorMessage.classList.add('show');
+                backgroundImage.classList.remove('loading-blur');
+                isTransitioning = false;
+            };
+
+            tempImg.src = item.image;
+        }
+
+        function navigate(direction) {
+            const newIndex = currentIndex + direction;
+            if (newIndex >= 0 && newIndex < filteredGallery.length) {
+                updateImage(newIndex);
+            }
+        }
+
+        function filterByYear(year) {
+            filteredGallery = year === 'all'
+                ? [...gallery]
+                : gallery.filter(item => item.year === parseInt(year));
+
+            if (filteredGallery.length === 0) {
+                emptyState.classList.add('show');
+                imgTitle.classList.remove('visible');
+                imgMeta.classList.remove('visible');
+                backgroundImage.style.opacity = '0';
+                announce(`No images found for ${year}`);
+                return;
+            }
+
+            emptyState.classList.remove('show');
+            currentIndex = 0;
+            updateImage(0);
+            announce(year === 'all' ? `Showing all ${filteredGallery.length} images` : `Showing ${filteredGallery.length} images from ${year}`);
+        }
+
+        // Touch/swipe support
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            const swipeThreshold = 50;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    navigate(1);
+                } else {
+                    navigate(-1);
+                }
+            }
+        }
+
+        // Event listeners
+        if (prevButton && nextButton) {
+            prevButton.addEventListener('click', () => navigate(-1));
+            nextButton.addEventListener('click', () => navigate(1));
+        }
+
+        if (leftZone && rightZone) {
+            leftZone.addEventListener('mouseenter', () => prevButton.classList.add('visible'));
+            leftZone.addEventListener('mouseleave', () => prevButton.classList.remove('visible'));
+            rightZone.addEventListener('mouseenter', () => nextButton.classList.add('visible'));
+            rightZone.addEventListener('mouseleave', () => nextButton.classList.remove('visible'));
+            leftZone.addEventListener('click', () => navigate(-1));
+            rightZone.addEventListener('click', () => navigate(1));
+        }
+
+        errorRetry.addEventListener('click', () => {
+            errorMessage.classList.remove('show');
+            updateImage(currentIndex);
+        });
+
+        document.querySelectorAll('.year-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.year-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
+                filterByYear(btn.dataset.year);
+            });
+        });
+
+        emptyStateBtn.addEventListener('click', () => {
+            const allBtn = document.querySelector('.year-btn[data-year="all"]');
+            if (allBtn) {
+                document.querySelectorAll('.year-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                allBtn.classList.add('active');
+                allBtn.setAttribute('aria-pressed', 'true');
+                filterByYear('all');
+            }
+        });
+
+        contextualTipClose.addEventListener('click', () => {
+            contextualTip.classList.remove('show');
+            hasSeenTip = true;
+            localStorage.setItem('hasSeenTip', 'true');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                navigate(-1);
+            } else if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                navigate(1);
+            }
+        });
+
+        container.addEventListener('touchstart', handleTouchStart, { passive: true });
+        container.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.index !== undefined) {
+                updateImage(e.state.index, false);
+            }
+        });
+
+        // Initialize from URL
+        function initFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const yearParam = params.get('year');
+            const imageParam = parseInt(params.get('image')) || 0;
+
+            if (yearParam && yearParam !== 'all') {
+                const yearBtn = document.querySelector(`.year-btn[data-year="${yearParam}"]`);
+                if (yearBtn) {
+                    document.querySelectorAll('.year-btn').forEach(b => {
+                        b.classList.remove('active');
+                        b.setAttribute('aria-pressed', 'false');
+                    });
+                    yearBtn.classList.add('active');
+                    yearBtn.setAttribute('aria-pressed', 'true');
+                    filteredGallery = gallery.filter(item => item.year === parseInt(yearParam));
+                }
+            }
+
+            currentIndex = Math.min(imageParam, filteredGallery.length - 1);
+        }
+
+        // Initialize
+        function init() {
+            initFromURL();
+            preloadImages();
+            updateImage(currentIndex, false);
+            setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+        }
+
+        init();
+    </script>
+
+</body>
+</html>

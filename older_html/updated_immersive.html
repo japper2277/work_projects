@@ -144,17 +144,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: clamp(16px, 3vw, 24px) clamp(20px, 4vw, 32px);
+            padding: 2rem;
             z-index: 100;
-            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.7), transparent);
-            backdrop-filter: blur(10px);
+            background: transparent;
+            backdrop-filter: none;
         }
 
         .artist-name {
-            font-size: clamp(1.125rem, 3vw, 1.5rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-shadow: none;
         }
 
         .artist-name:focus-visible {
@@ -169,19 +169,18 @@
         }
 
         .main-header nav a {
-            color: var(--text-secondary);
+            color: #fff;
             text-decoration: none;
-            font-size: clamp(0.875rem, 2vw, 0.9375rem);
-            font-weight: 600;
-            transition: color 0.2s ease;
+            margin-left: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: opacity 0.3s ease;
             position: relative;
-            padding: 8px 4px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            padding: 0;
+            text-shadow: none;
         }
 
-        .main-header nav a:hover {
-            color: var(--text-primary);
-        }
+        .main-header nav a:hover { opacity: 0.7; }
 
         .main-header nav a:focus-visible {
             outline: 3px solid var(--focus-ring);
@@ -317,6 +316,58 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
         }
 
+        /* Side hover zones for quick nav */
+        .hover-zone {
+            position: absolute;
+            top: 0;
+            /* Leave space for bottom UI so filters remain clickable */
+            bottom: clamp(140px, 22vh, 260px);
+            width: 50%;
+            z-index: 95;
+            cursor: pointer;
+        }
+
+        .hover-zone.left { left: 0; }
+        .hover-zone.right { right: 0; }
+
+        /* Centered side arrows */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 96;
+            pointer-events: none;
+            padding: 0 8px;
+        }
+
+        .carousel-nav button {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: clamp(2rem, 6vw, 3.25rem);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: auto;
+            line-height: 1;
+            text-shadow: 0 6px 24px rgba(0,0,0,0.6);
+        }
+
+        /* Keep clicks going to bottom controls, not these arrows, near the bottom */
+        .carousel-nav button { align-self: center; }
+
+        .carousel-nav button.visible { opacity: 1; }
+        .carousel-nav button:hover { transform: scale(1.12); }
+
+        @media (max-width: 768px) {
+            /* Hide side arrows on small screens; rely on swipe */
+            .hover-zone, .carousel-nav { display: none; }
+        }
+
         /* Thumbnail grid - improved sizing */
         .thumbnail-container {
             display: flex;
@@ -330,6 +381,11 @@
             gap: 8px;
             align-items: center;
         }
+
+        /* Hide bottom-right navigation controls (prev/next/counter) */
+        .bottom-ui .thumbnail-controls { display: none; }
+        /* Hide entire thumbnail strip */
+        .bottom-ui .thumbnail-container, .bottom-ui .thumbnail-grid { display: none; }
 
         .counter {
             color: var(--text-primary);
@@ -1142,6 +1198,14 @@
             <button class="error-retry" id="errorRetry">Retry</button>
         </div>
 
+        <!-- Side hover zones and overlay arrows -->
+        <div class="hover-zone left" aria-hidden="true"></div>
+        <div class="hover-zone right" aria-hidden="true"></div>
+        <div class="carousel-nav" aria-hidden="true">
+            <button class="prev" aria-label="Previous image">‹</button>
+            <button class="next" aria-label="Next image">›</button>
+        </div>
+
         <main id="main-image">
             <div class="image-title">
                 <h2 id="imgTitle"></h2>
@@ -1259,6 +1323,10 @@
         const nextBtn = document.getElementById('nextBtn');
         const thumbnailGrid = document.getElementById('thumbnails');
         const keyboardHint = document.getElementById('keyboardHint');
+        const leftZone = document.querySelector('.hover-zone.left');
+        const rightZone = document.querySelector('.hover-zone.right');
+        const sidePrevBtn = document.querySelector('.carousel-nav .prev');
+        const sideNextBtn = document.querySelector('.carousel-nav .next');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const errorMessage = document.getElementById('errorMessage');
         const errorRetry = document.getElementById('errorRetry');
@@ -1571,6 +1639,19 @@
         // Event listeners
         prevBtn.addEventListener('click', () => navigate(-1));
         nextBtn.addEventListener('click', () => navigate(1));
+
+        // Side hover zones: reveal/hide arrows
+        if (leftZone && rightZone && sidePrevBtn && sideNextBtn) {
+            leftZone.addEventListener('mouseenter', () => sidePrevBtn.classList.add('visible'));
+            leftZone.addEventListener('mouseleave', () => sidePrevBtn.classList.remove('visible'));
+            rightZone.addEventListener('mouseenter', () => sideNextBtn.classList.add('visible'));
+            rightZone.addEventListener('mouseleave', () => sideNextBtn.classList.remove('visible'));
+
+            leftZone.addEventListener('click', () => navigate(-1));
+            rightZone.addEventListener('click', () => navigate(1));
+            sidePrevBtn.addEventListener('click', () => navigate(-1));
+            sideNextBtn.addEventListener('click', () => navigate(1));
+        }
 
         errorRetry.addEventListener('click', () => {
             errorMessage.classList.remove('show');

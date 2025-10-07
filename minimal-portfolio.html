@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="referrer" content="no-referrer">
+    <meta name="description" content="Anjelina Villalobos - Digital Artist Portfolio">
+    <meta name="author" content="Jared Apper">
+    <meta name="theme-color" content="#111111">
+    <title>Anjelina Villalobos | Portfolio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/minimal-portfolio.css">
+</head>
+<body>
+    <a href="#main-image" class="skip-link">Skip to gallery</a>
+
+    <div class="fullscreen-container" id="container">
+
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-text">LOADING...</div>
+            <div class="loading-hint">Pro tip: Press <kbd>G</kbd> for gallery view</div>
+        </div>
+
+        <div class="preview-image prev" id="prevPreview"></div>
+        <div class="background-image" id="backgroundImage" role="img" aria-label=""></div>
+        <div class="preview-image next" id="nextPreview"></div>
+
+        <header class="main-header" role="banner">
+            <div class="artist-info" tabindex="0">
+                <div class="artist-name">Anjelina Villalobos</div>
+                <div class="artist-title">ARTIST / PAINTER</div>
+            </div>
+            <nav role="navigation" aria-label="Main navigation">
+                <a href="#portfolio">PORTFOLIO</a>
+                <a href="#about">ABOUT</a>
+                <a href="#contact">CONTACT</a>
+            </nav>
+        </header>
+
+        <div class="error-message" id="errorMessage" role="alert" aria-live="assertive">
+            <h3>FAILED TO LOAD IMAGE</h3>
+            <p>Please check your connection and try again.</p>
+            <button class="error-retry" id="errorRetry">RETRY</button>
+        </div>
+
+        <div class="hover-zone left" aria-hidden="true"></div>
+        <div class="hover-zone right" aria-hidden="true"></div>
+
+        <div class="carousel-nav">
+            <button class="prev" aria-label="Previous image">&lt;</button>
+            <button class="next" aria-label="Next image">&gt;</button>
+        </div>
+
+        <main id="main-image">
+            <div class="image-title">
+                <a href="#portfolio" class="title-link">
+                    <h1 id="imgTitle"></h1>
+                </a>
+                <a href="#portfolio" class="meta-link">
+                    <div class="image-meta" id="imgMeta"></div>
+                </a>
+            </div>
+
+        </main>
+
+        <button class="gallery-hint" id="galleryHint" aria-label="Open gallery overview" title="Gallery Overview">
+            <svg class="hint-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="9" y="0" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="0" y="9" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="9" y="9" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <span class="hint-text"></span>
+        </button>
+
+
+        <div class="contextual-tip" id="contextualTip">
+            <button class="contextual-tip-close" id="contextualTipClose">×</button>
+            <span id="contextualTipText">Press ← → to navigate images</span>
+        </div>
+
+    </div>
+
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true" id="announcer"></div>
+
+    <div id="toast">Pro Tip: Press <kbd>G</kbd> to view the full gallery.</div>
+
+    <!-- Command Bar Gallery -->
+    <div class="command-bar-overlay" id="commandBar" role="dialog" aria-label="Gallery overview" aria-modal="true">
+        <div class="command-bar-content">
+            <div class="command-bar-header">
+                <p>GALLERY / Press <kbd>Esc</kbd> or <kbd>G</kbd> to close</p>
+            </div>
+            <div class="thumbnail-grid" id="thumbnailGrid" role="grid"></div>
+        </div>
+    </div>
+
+    <script src="scripts/minimal-portfolio.js"></script>
+
+</body>
+</html>
