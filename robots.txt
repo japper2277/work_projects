@@ -1,0 +1,24 @@
+# robots.txt for anjelinavillalobos.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://anjelinavillalobos.com/sitemap.xml
+
+# Disallow crawling of specific directories (if any)
+# Disallow: /admin/
+# Disallow: /private/
+
+# Allow all major search engine bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Crawl delay (optional - helps prevent server overload)
+# Crawl-delay: 1

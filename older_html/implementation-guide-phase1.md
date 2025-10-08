@@ -54,38 +54,31 @@ Add these to your HTML `<head>`:
 
 ```
 work-projects/
-├── index.html                 # Main portfolio page
+├── ultimate-portfolio.html    # Main portfolio page
 ├── case-study.html           # Template for project pages
 ├── assets/
 │   ├── images/
 │   │   ├── projects/         # Project thumbnails
-│   │   ├── genesis/          # Artwork timeline images
 │   │   └── portraits/        # Profile photos
 │   ├── models/               # 3D models (.glb, .gltf)
 │   └── videos/               # Demo videos
 ├── scripts/
 │   ├── main.js               # Entry point
-│   ├── genesis-viewer.js     # Interactive Genesis feature
 │   ├── constellation.js      # 3D portfolio constellation
-│   ├── annotations.js        # Director's cut annotations
 │   ├── transitions.js        # Page transitions setup
 │   └── utils.js              # Helper functions
 ├── styles/
 │   ├── main.css              # Global styles
 │   ├── variables.css         # CSS custom properties
-│   ├── genesis.css           # Genesis viewer styles
-│   ├── constellation.css     # 3D constellation styles
-│   └── annotations.css       # Annotation styles
+│   └── constellation.css     # 3D constellation styles
 └── data/
-    ├── projects.json         # Portfolio project data
-    ├── genesis-timeline.json # Artwork evolution data
-    └── annotations.json      # Commentary data
+    └── projects.json         # Portfolio project data
 ```
 
 **Create the structure:**
 
 ```bash
-mkdir -p assets/{images/{projects,genesis,portraits},models,videos}
+mkdir -p assets/{images/{projects,portraits},models,videos}
 mkdir -p scripts styles data
 ```
 
@@ -93,7 +86,7 @@ mkdir -p scripts styles data
 
 ## 3. Base HTML Template
 
-Create `index.html`:
+Create `ultimate-portfolio.html`:
 
 ```html
 <!DOCTYPE html>
@@ -129,7 +122,7 @@ Create `index.html`:
                 <a href="/" class="logo">Your Name</a>
                 <ul class="nav-links">
                     <li><a href="#work">Work</a></li>
-                    <li><a href="#genesis">Genesis</a></li>
+                    <li><a href="#constellation">Explore</a></li>
                     <li><a href="#about">About</a></li>
                 </ul>
             </nav>
@@ -143,11 +136,6 @@ Create `index.html`:
             <!-- Portfolio Grid (placeholder) -->
             <section id="work" class="portfolio-grid">
                 <!-- Projects will be loaded here -->
-            </section>
-
-            <!-- Interactive Genesis Section (placeholder) -->
-            <section id="genesis" class="genesis-viewer">
-                <!-- Timeline will be loaded here -->
             </section>
 
             <!-- 3D Constellation (placeholder) -->
@@ -308,12 +296,14 @@ body {
     font-weight: 700;
     margin-bottom: var(--spacing-sm);
     opacity: 0; /* Will animate in with GSAP */
+    transform: translateY(30px); /* Start below */
 }
 
 .hero-subtitle {
     font-size: var(--font-size-xl);
     color: var(--color-text-muted);
     opacity: 0; /* Will animate in with GSAP */
+    transform: translateY(20px); /* Start below */
 }
 
 /* Portfolio Grid (basic setup) */
@@ -327,14 +317,10 @@ body {
 }
 
 /* Placeholder sections */
-.genesis-viewer,
-.constellation-container {
-    min-height: 100vh;
-    padding: var(--spacing-xl) var(--spacing-md);
-}
-
 .constellation-container {
     position: relative;
+    min-height: 100vh;
+    padding: var(--spacing-xl) var(--spacing-md);
 }
 
 #constellation-canvas {
@@ -378,9 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeroAnimation();
 
     // Other initializations will go here:
-    // - initGenesisViewer()
     // - initConstellation()
-    // - initAnnotations()
     // - initPageTransitions()
 });
 
@@ -445,33 +429,16 @@ Create `data/projects.json`:
 }
 ```
 
-Create `data/genesis-timeline.json`:
-
-```json
-{
-    "timeline": [
-        {
-            "id": "genesis-1",
-            "title": "Initial Concept",
-            "date": "2023-01",
-            "image": "assets/images/genesis/concept-1.jpg",
-            "description": "The first sketch and conceptual exploration",
-            "iterations": 3,
-            "techniques": ["Pencil sketching", "Digital painting"]
-        }
-    ]
-}
-```
 
 ---
 
 ## 8. Verification Checklist
 
-Before moving to Phase 2, ensure:
+Before moving to Phase 4, ensure:
 
 - [ ] All dependencies installed (npm or CDN links working)
 - [ ] Folder structure created
-- [ ] `index.html` loads without errors
+- [ ] `ultimate-portfolio.html` loads without errors
 - [ ] CSS variables defined in `variables.css`
 - [ ] Base styles rendering correctly
 - [ ] Console shows "Portfolio initialized" message
@@ -493,7 +460,7 @@ python3 -m http.server 8000
 npx serve
 
 # Option 3: VS Code Live Server extension
-# Right-click index.html > "Open with Live Server"
+# Right-click ultimate-portfolio.html > "Open with Live Server"
 ```
 
 Visit `http://localhost:8000` and verify everything loads correctly.
@@ -503,9 +470,9 @@ Visit `http://localhost:8000` and verify everything loads correctly.
 ## Next Steps
 
 Once Phase 1 is complete, you'll be ready for:
-- **Phase 2**: Interactive Genesis (Artwork Timeline)
-- **Phase 3**: Director's Cut Annotations
 - **Phase 4**: 3D Portfolio Constellation
+- **Phase 5**: AR Viewer Integration
+- **Phase 6**: Page Transitions & Advanced GSAP
 
 ---
 

@@ -1,0 +1,15 @@
+{
+    "projects": [
+        {
+            "id": "project-1",
+            "title": "Project Title",
+            "category": "Web Design",
+            "thumbnail": "assets/images/projects/project-1.jpg",
+            "description": "Brief project description",
+            "tags": ["UI/UX", "Interactive"],
+            "year": 2024,
+            "link": "case-study.html?project=project-1",
+            "featured": true
+        }
+    ]
+}

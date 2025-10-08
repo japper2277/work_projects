@@ -12,9 +12,7 @@
     --color-secondary: #a0a0a0;
     --color-background: #111111;
 
-    --ease-quick: cubic-bezier(0, 0, 0.2, 1);        /* Quick decelerate - for hovers & quick interactions */
-    --ease-anticipatory: cubic-bezier(0.4, 0, 0.2, 1); /* Anticipatory - for major transitions */
-    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);     /* General smooth transitions */
+    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Subtle custom cursor (dot) for interactive elements on desktop */
     --cursor-dot: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="3" fill="white"/><circle cx="6" cy="6" r="5.5" fill="none" stroke="black" stroke-width="1"/></svg>') 6 6, pointer;
@@ -169,7 +167,7 @@ body::before {
     background-size: cover;
     background-position: center center;
     opacity: 0;
-    transition: opacity 1.2s var(--ease-anticipatory);
+    transition: opacity 1.2s var(--transition-smooth);
     will-change: opacity, transform;
 }
 
@@ -237,7 +235,7 @@ body::before {
 }
 
 .preview-image.snapping {
-    transition: transform 0.25s var(--ease-quick);
+    transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* ====================================
@@ -254,7 +252,7 @@ body::before {
     gap: 1.5rem;
     z-index: 200;
     opacity: 1;
-    transition: opacity 0.6s var(--ease-anticipatory);
+    transition: opacity 0.6s ease;
 }
 
 .loading-overlay.hidden {
@@ -343,13 +341,13 @@ body::before {
     .artist-info:focus-visible .artist-name {
         letter-spacing: 2px;
         opacity: 0.9;
-        transition: letter-spacing 0.35s var(--ease-quick), opacity 0.35s var(--ease-quick);
+        transition: letter-spacing 0.35s var(--transition-smooth), opacity 0.35s ease;
     }
 
     .artist-info:hover .artist-title,
     .artist-info:focus-visible .artist-title {
         opacity: 0.9;
-        transition: opacity 0.35s var(--ease-quick);
+        transition: opacity 0.35s ease;
     }
 }
 
@@ -369,7 +367,7 @@ body::before {
     font-size: 0.9rem;
     font-weight: 600;
     letter-spacing: 1px;
-    transition: color 0.3s var(--ease-quick);
+    transition: color 0.3s ease;
     position: relative;
 }
 
@@ -400,7 +398,7 @@ body::before {
     height: 1px;
     width: 0;
     background: currentColor;
-    transition: width 0.3s var(--ease-quick);
+    transition: width 0.3s var(--transition-smooth);
 }
 
 .main-header nav a:hover::after,
@@ -423,10 +421,7 @@ body::before {
     padding: 0 15px;
     border-radius: 0;
     cursor: pointer;
-    transition: background 0.4s var(--ease-quick),
-                border-color 0.4s var(--ease-quick),
-                color 0.4s var(--ease-quick),
-                opacity 0.4s var(--ease-anticipatory);
+    transition: all 0.4s var(--transition-smooth);
     font-family: var(--font-special);
     font-size: 0.85rem;
     letter-spacing: 0.1em;
@@ -458,15 +453,14 @@ body::before {
 
 .hint-icon {
     flex-shrink: 0;
-    transition: transform 0.4s var(--ease-quick);
+    transition: all 0.4s var(--transition-smooth);
 }
 
 .hint-text {
     display: inline-block;
     max-width: 0;
     opacity: 0;
-    transition: max-width 0.4s var(--ease-quick),
-                opacity 0.4s var(--ease-quick);
+    transition: all 0.4s var(--transition-smooth);
     overflow: hidden;
 }
 
@@ -520,7 +514,7 @@ body::before {
     color: inherit;
     display: block;
     cursor: pointer;
-    transition: opacity 0.3s var(--ease-quick);
+    transition: opacity 0.3s ease;
 }
 
 .title-link:hover,
@@ -545,10 +539,7 @@ body::before {
     font-weight: 600;
     letter-spacing: 1px;
     border-radius: 0;
-    transition: background-color 0.3s var(--ease-quick),
-                color 0.3s var(--ease-quick),
-                border-color 0.3s var(--ease-quick),
-                transform 0.15s var(--ease-quick);
+    transition: all 0.3s ease;
     margin-top: 1rem;
 }
 
@@ -559,7 +550,7 @@ body::before {
 }
 
 .inquire-button:active {
-    transform: scale(0.96);
+    transform: scale(0.98);
 }
 
 .inquire-button:focus-visible {
@@ -607,8 +598,7 @@ body::before {
     font-size: 3rem;
     cursor: pointer;
     opacity: 0.4;
-    transition: opacity 0.3s var(--ease-quick),
-                transform 0.3s var(--ease-quick);
+    transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: auto;
     padding: 0 2rem;
     font-family: inherit;
@@ -670,7 +660,7 @@ body::before {
     font-size: 0.9rem;
     letter-spacing: 0.1em;
     border-radius: 0;
-    transition: background 0.3s var(--ease-quick);
+    transition: background 0.3s ease;
 }
 
 .error-retry:hover {
@@ -723,7 +713,7 @@ body::before {
     justify-content: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s var(--ease-anticipatory);
+    transition: opacity 0.3s ease;
 }
 
 .command-bar-overlay.show {
@@ -780,9 +770,7 @@ body::before {
     overflow: hidden;
     border-radius: 0;
     border: 2px solid transparent;
-    transition: transform 0.3s var(--ease-quick),
-            border-color 0.3s var(--ease-quick),
-            box-shadow 0.3s var(--ease-quick);
+    transition: all 0.3s var(--transition-smooth);
     background: rgba(255, 255, 255, 0.05);
 }
 
@@ -818,7 +806,7 @@ body::before {
     background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     font-size: 0.75rem;
     opacity: 0;
-    transition: opacity 0.2s var(--ease-quick);
+    transition: opacity 0.2s ease;
 }
 
 .thumbnail-item:hover .thumbnail-info,
@@ -842,7 +830,7 @@ body::before {
     letter-spacing: 0.1em;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s var(--ease-quick);
+    transition: opacity 0.3s ease;
 }
 
 #toast.show {
@@ -923,7 +911,7 @@ body::before {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.6s var(--ease-anticipatory);
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .grid-item:hover img {
@@ -939,8 +927,7 @@ body::before {
     background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.4s var(--ease-quick),
-            transform 0.4s var(--ease-quick);
+    transition: all 0.4s ease;
 }
 
 .grid-item:hover .grid-item-overlay {
@@ -977,7 +964,7 @@ body::before {
     text-transform: uppercase;
     z-index: 10;
     border-radius: 0;
-    transition: transform 0.3s var(--ease-quick);
+    transition: all 0.3s ease;
     pointer-events: none;
 }
 
@@ -1026,10 +1013,7 @@ body::before {
     font-size: 0.9rem;
     font-weight: 600;
     letter-spacing: 1px;
-    transition: background 0.3s var(--ease-quick),
-                border-color 0.3s var(--ease-quick),
-                color 0.3s var(--ease-quick),
-                transform 0.15s var(--ease-quick);
+    transition: all 0.3s ease;
     text-transform: uppercase;
 }
 
@@ -1039,7 +1023,7 @@ body::before {
 }
 
 .filter-btn:active {
-    transform: scale(0.96);
+    transform: scale(0.98);
 }
 
 .filter-btn.active {
@@ -1074,11 +1058,7 @@ body::before {
     font-size: 0.9rem;
     font-weight: 600;
     letter-spacing: 1px;
-    transition: background-color 0.3s var(--ease-quick),
-                border-color 0.3s var(--ease-quick),
-                color 0.3s var(--ease-quick),
-                transform 0.15s var(--ease-quick),
-                opacity 0.3s var(--ease-quick);
+    transition: all 0.3s ease;
     text-transform: uppercase;
 }
 
@@ -1098,7 +1078,7 @@ body::before {
 }
 
 .pagination-btn:active:not(:disabled) {
-    transform: scale(0.96);
+    transform: scale(0.98);
 }
 
 .pagination-numbers {
@@ -1117,10 +1097,7 @@ body::before {
     font-size: 0.9rem;
     font-weight: 600;
     min-width: 44px;
-    transition: background 0.3s var(--ease-quick),
-                border-color 0.3s var(--ease-quick),
-                color 0.3s var(--ease-quick),
-                transform 0.15s var(--ease-quick);
+    transition: all 0.3s ease;
 }
 
 .page-number:hover {
@@ -1140,7 +1117,7 @@ body::before {
 }
 
 .page-number:active {
-    transform: scale(0.96);
+    transform: scale(0.98);
 }
 
 .pagination-ellipsis {
@@ -1169,11 +1146,6 @@ body::before {
     justify-content: center;
     visibility: hidden;
     opacity: 0;
-    transform: scale(0.95);
-}
-
-.lightbox-overlay.show {
-    visibility: visible;
 }
 
 .lightbox-close {
@@ -1186,8 +1158,7 @@ body::before {
     cursor: pointer;
     padding: 0.5rem;
     z-index: 10003;
-    transition: color 0.3s var(--ease-quick),
-            transform 0.3s var(--ease-quick);
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .lightbox-close:hover {
@@ -1225,9 +1196,7 @@ body::before {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.3s var(--ease-quick),
-            border-color 0.3s var(--ease-quick),
-            color 0.3s var(--ease-quick);
+    transition: all 0.3s ease;
     pointer-events: auto;
 }
 
@@ -1317,10 +1286,7 @@ body::before {
     font-family: var(--font-body);
     font-weight: 600;
     letter-spacing: 1px;
-    transition: background 0.3s var(--ease-quick),
-            color 0.3s var(--ease-quick),
-            border-color 0.3s var(--ease-quick),
-            transform 0.15s var(--ease-quick);
+    transition: all 0.3s ease;
     margin-top: auto;
     text-transform: uppercase;
     font-size: 0.9rem;
@@ -1338,7 +1304,7 @@ body::before {
 }
 
 .lightbox-inquire-btn:active {
-    transform: scale(0.96);
+    transform: scale(0.98);
 }
 
 /* ====================================
@@ -1377,7 +1343,7 @@ body::before {
     text-decoration: none;
     font-weight: 600;
     border-bottom: 1px solid transparent;
-    transition: border-color 0.3s var(--ease-quick);
+    transition: border-color 0.3s;
 }
 
 .cv-link:hover {
@@ -1418,7 +1384,7 @@ body::before {
     font-size: 2rem;
     color: var(--color-primary);
     text-decoration: none;
-    transition: color 0.3s var(--ease-quick);
+    transition: color 0.3s;
     margin-bottom: 2rem;
 }
 
@@ -1443,11 +1409,11 @@ body::before {
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: color 0.3s var(--ease-quick);
+    transition: color 0.3s;
 }
 
 .social-links a:hover {
-    color: var(--color-accent);
+    color: var(--color-primary);
 }
 
 .social-links a:active {
@@ -1639,7 +1605,7 @@ img[loading="lazy"].loaded {
 
 /* Smooth fade-in for images */
 .portfolio-grid img {
-    transition: opacity 0.3s var(--ease-quick);
+    transition: opacity 0.3s ease;
 }
 
 /* ====================================

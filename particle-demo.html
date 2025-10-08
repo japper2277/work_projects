@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Particle Reconstruction Demo</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Canvas container */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        #particle-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Text overlays */
+        .text-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .artist-name {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            opacity: 0;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 200;
+            letter-spacing: 0.2em;
+            opacity: 0;
+            color: #999;
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            opacity: 0;
+            font-size: 0.875rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #666;
+        }
+
+        .scroll-hint::after {
+            content: '↓';
+            display: block;
+            text-align: center;
+            margin-top: 0.5rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        /* Spacer for scroll */
+        .scroll-spacer {
+            height: 300vh;
+            position: relative;
+            z-index: 0;
+        }
+
+        /* Controls panel */
+        .controls {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(20, 20, 20, 0.9);
+            padding: 1.5rem;
+            border-radius: 8px;
+            z-index: 100;
+            font-size: 0.875rem;
+            backdrop-filter: blur(10px);
+            max-width: 250px;
+        }
+
+        .controls h3 {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #999;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: #fff;
+        }
+
+        .control-group .value {
+            float: right;
+            color: #fff;
+        }
+
+        .control-group button {
+            width: 100%;
+            padding: 0.5rem;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .control-group button:hover {
+            background: #ddd;
+        }
+
+        /* Reduced motion fallback */
+        @media (prefers-reduced-motion: reduce) {
+            #canvas-container {
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect fill="%23222" width="800" height="600"/><text x="400" y="300" font-size="24" fill="%23999" text-anchor="middle">Animation Disabled (Reduced Motion)</text></svg>');
+                background-size: contain;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+            #particle-canvas {
+                display: none;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading indicator -->
+    <div class="loading" id="loading">LOADING...</div>
+
+    <!-- Canvas -->
+    <div id="canvas-container">
+        <canvas id="particle-canvas"></canvas>
+    </div>
+
+    <!-- Text overlays -->
+    <div class="text-overlay">
+        <div class="artist-name" id="artist-name">ANJELINA VILLALOBOS</div>
+        <div class="subtitle" id="subtitle">Contemporary Artist</div>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint" id="scroll-hint">Scroll to explore</div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <h3>Controls</h3>
+        <div class="control-group">
+            <label>
+                Particle Count: <span class="value" id="particle-count-value">2000</span>
+            </label>
+            <input type="range" id="particle-count" min="500" max="5000" step="100" value="2000">
+        </div>
+        <div class="control-group">
+            <label>
+                Animation Speed: <span class="value" id="speed-value">1.0x</span>
+            </label>
+            <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1">
+        </div>
+        <div class="control-group">
+            <label>
+                Drift Amount: <span class="value" id="drift-value">1.0</span>
+            </label>
+            <input type="range" id="drift" min="0" max="3" step="0.1" value="1">
+        </div>
+        <div class="control-group">
+            <button id="reset-btn">Reset Animation</button>
+        </div>
+    </div>
+
+    <!-- Scroll spacer -->
+    <div class="scroll-spacer"></div>
+
+    <!-- GSAP and ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            particleCount: 2000,
+            animationSpeed: 1.0,
+            driftAmount: 1.0,
+            particleSize: 2,
+            lerpSpeed: 0.08,
+            isMobile: window.innerWidth < 768
+        };
+
+        // Adjust for mobile
+        if (CONFIG.isMobile) {
+            CONFIG.particleCount = 1000;
+        }
+
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Canvas setup
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        let width, height;
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Particle class
+        class Particle {
+            constructor(targetX, targetY, color) {
+                // Random starting position
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+
+                // Target position (where it should end up)
+                this.targetX = targetX;
+                this.targetY = targetY;
+
+                // Velocity for drift
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+
+                // Color
+                this.color = color;
+
+                // Noise offset for organic motion
+                this.noiseOffsetX = Math.random() * 1000;
+                this.noiseOffsetY = Math.random() * 1000;
+
+                // Size variation
+                this.size = CONFIG.particleSize + Math.random() * 1;
+            }
+
+            update(formationProgress, deltaTime) {
+                // Lerp towards target based on formation progress
+                const lerpAmount = CONFIG.lerpSpeed * CONFIG.animationSpeed * deltaTime;
+
+                if (formationProgress > 0) {
+                    this.x += (this.targetX - this.x) * lerpAmount * formationProgress;
+                    this.y += (this.targetY - this.y) * lerpAmount * formationProgress;
+                } else {
+                    // Free floating with Perlin-like noise
+                    this.noiseOffsetX += 0.01 * CONFIG.driftAmount;
+                    this.noiseOffsetY += 0.01 * CONFIG.driftAmount;
+
+                    const noiseX = Math.sin(this.noiseOffsetX) * 0.5;
+                    const noiseY = Math.cos(this.noiseOffsetY) * 0.5;
+
+                    this.x += (this.vx + noiseX) * CONFIG.driftAmount;
+                    this.y += (this.vy + noiseY) * CONFIG.driftAmount;
+
+                    // Wrap around edges
+                    if (this.x < 0) this.x = width;
+                    if (this.x > width) this.x = 0;
+                    if (this.y < 0) this.y = height;
+                    if (this.y > height) this.y = 0;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+        // Image sampling and particle generation
+        let particles = [];
+        let formationProgress = 0;
+
+        function createParticlesFromImage() {
+            // Create a sample image using canvas
+            const imgCanvas = document.createElement('canvas');
+            const imgCtx = imgCanvas.getContext('2d');
+
+            // Create an abstract gradient image as placeholder
+            const imgWidth = 800;
+            const imgHeight = 600;
+            imgCanvas.width = imgWidth;
+            imgCanvas.height = imgHeight;
+
+            // Draw a complex gradient pattern
+            const gradient1 = imgCtx.createLinearGradient(0, 0, imgWidth, imgHeight);
+            gradient1.addColorStop(0, '#FF6B35');
+            gradient1.addColorStop(0.5, '#F7931E');
+            gradient1.addColorStop(1, '#FDC830');
+
+            imgCtx.fillStyle = gradient1;
+            imgCtx.fillRect(0, 0, imgWidth, imgHeight);
+
+            // Add some abstract shapes
+            const gradient2 = imgCtx.createRadialGradient(imgWidth * 0.3, imgHeight * 0.3, 50, imgWidth * 0.3, imgHeight * 0.3, 300);
+            gradient2.addColorStop(0, 'rgba(196, 77, 88, 0.8)');
+            gradient2.addColorStop(1, 'rgba(196, 77, 88, 0)');
+            imgCtx.fillStyle = gradient2;
+            imgCtx.fillRect(0, 0, imgWidth, imgHeight);
+
+            const gradient3 = imgCtx.createRadialGradient(imgWidth * 0.7, imgHeight * 0.6, 50, imgWidth * 0.7, imgHeight * 0.6, 250);
+            gradient3.addColorStop(0, 'rgba(52, 172, 224, 0.6)');
+            gradient3.addColorStop(1, 'rgba(52, 172, 224, 0)');
+            imgCtx.fillStyle = gradient3;
+            imgCtx.fillRect(0, 0, imgWidth, imgHeight);
+
+            // Get pixel data
+            const imageData = imgCtx.getImageData(0, 0, imgWidth, imgHeight);
+            const data = imageData.data;
+
+            // Calculate scale to fit image in viewport
+            const scale = Math.min(width / imgWidth, height / imgHeight) * 0.7;
+            const offsetX = (width - imgWidth * scale) / 2;
+            const offsetY = (height - imgHeight * scale) / 2;
+
+            // Sample pixels at intervals
+            const step = Math.ceil(Math.sqrt((imgWidth * imgHeight) / CONFIG.particleCount));
+
+            particles = [];
+
+            for (let y = 0; y < imgHeight; y += step) {
+                for (let x = 0; x < imgWidth; x += step) {
+                    const index = (y * imgWidth + x) * 4;
+                    const r = data[index];
+                    const g = data[index + 1];
+                    const b = data[index + 2];
+                    const a = data[index + 3];
+
+                    // Skip transparent or very dark pixels
+                    if (a > 50 && (r + g + b) > 100) {
+                        const targetX = offsetX + x * scale;
+                        const targetY = offsetY + y * scale;
+                        const color = `rgb(${r}, ${g}, ${b})`;
+
+                        particles.push(new Particle(targetX, targetY, color));
+                    }
+                }
+            }
+
+            console.log(`Created ${particles.length} particles`);
+        }
+
+        // Animation loop
+        let lastTime = performance.now();
+
+        function animate() {
+            const currentTime = performance.now();
+            const deltaTime = (currentTime - lastTime) / 16.67; // Normalized to 60fps
+            lastTime = currentTime;
+
+            // Clear canvas
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, width, height);
+
+            // Update and draw particles
+            particles.forEach(particle => {
+                particle.update(formationProgress, deltaTime);
+                particle.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize
+        function init() {
+            if (prefersReducedMotion) return;
+
+            createParticlesFromImage();
+            animate();
+
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+
+            // Setup GSAP ScrollTrigger
+            setupScrollAnimation();
+        }
+
+        // GSAP ScrollTrigger setup
+        function setupScrollAnimation() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Main timeline
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.scroll-spacer',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 1,
+                    onUpdate: (self) => {
+                        formationProgress = self.progress;
+                    }
+                }
+            });
+
+            // Text animations
+            gsap.to('#artist-name', {
+                opacity: 1,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: '.scroll-spacer',
+                    start: 'top top',
+                    end: '30% top',
+                    scrub: 1
+                }
+            });
+
+            gsap.to('#subtitle', {
+                opacity: 1,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: '.scroll-spacer',
+                    start: '20% top',
+                    end: '50% top',
+                    scrub: 1
+                }
+            });
+
+            // Scroll hint
+            gsap.to('#scroll-hint', {
+                opacity: 1,
+                duration: 0.5,
+                delay: 1
+            });
+
+            gsap.to('#scroll-hint', {
+                opacity: 0,
+                scrollTrigger: {
+                    trigger: '.scroll-spacer',
+                    start: 'top top',
+                    end: '10% top',
+                    scrub: 1
+                }
+            });
+        }
+
+        // Controls
+        document.getElementById('particle-count').addEventListener('input', (e) => {
+            CONFIG.particleCount = parseInt(e.target.value);
+            document.getElementById('particle-count-value').textContent = CONFIG.particleCount;
+        });
+
+        document.getElementById('speed').addEventListener('input', (e) => {
+            CONFIG.animationSpeed = parseFloat(e.target.value);
+            document.getElementById('speed-value').textContent = CONFIG.animationSpeed.toFixed(1) + 'x';
+        });
+
+        document.getElementById('drift').addEventListener('input', (e) => {
+            CONFIG.driftAmount = parseFloat(e.target.value);
+            document.getElementById('drift-value').textContent = CONFIG.driftAmount.toFixed(1);
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            formationProgress = 0;
+            window.scrollTo(0, 0);
+            createParticlesFromImage();
+        });
+
+        // Start
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

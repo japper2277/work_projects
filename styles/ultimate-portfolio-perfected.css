@@ -1,0 +1,150 @@
+/* This file contains all the perfected easing changes that need to be applied to ultimate-portfolio.css */
+
+/* ==== CSS VARIABLES ==== */
+:root {
+    /* Replace line 15 with these three easing curves: */
+    --ease-quick: cubic-bezier(0, 0, 0.2, 1);        /* Quick decelerate - for hovers & quick interactions */
+    --ease-anticipatory: cubic-bezier(0.4, 0, 0.2, 1); /* Anticipatory - for major transitions */
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);     /* General smooth transitions */
+}
+
+/* ==== NAVIGATION ==== */
+/* Line 347, 353: Artist info hover */
+transition: letter-spacing 0.35s var(--ease-quick), opacity 0.35s var(--ease-quick);
+transition: opacity 0.35s var(--ease-quick);
+
+/* Line 373: Nav links */
+transition: color 0.3s var(--ease-quick);
+
+/* Line 404: Nav link underline */
+transition: width 0.3s var(--ease-quick);
+
+/* ==== GALLERY HINT BUTTON ==== */
+/* Line 427-430: Gallery hint transitions */
+transition: background 0.4s var(--ease-quick),
+            border-color 0.4s var(--ease-quick),
+            color 0.4s var(--ease-quick),
+            opacity 0.4s var(--ease-anticipatory);
+
+/* Line 462: Hint icon */
+transition: transform 0.4s var(--ease-quick);
+
+/* Line 469-470: Hint text */
+transition: max-width 0.4s var(--ease-quick),
+            opacity 0.4s var(--ease-quick);
+
+/* ==== IMAGE TITLE & META ==== */
+/* Line 524: Title/meta links */
+transition: opacity 0.3s var(--ease-quick);
+
+/* Line 549-552: Inquire button */
+transition: background-color 0.3s var(--ease-quick),
+            color 0.3s var(--ease-quick),
+            border-color 0.3s var(--ease-quick),
+            transform 0.15s var(--ease-quick);
+
+/* ==== CAROUSEL NAV ==== */
+/* Line 611-612: Carousel buttons */
+transition: opacity 0.3s var(--ease-quick),
+            transform 0.3s var(--ease-quick);
+
+/* ==== ERROR RETRY ==== */
+/* Line 668: Error retry button */
+transition: background 0.3s var(--ease-quick);
+
+/* ==== COMMAND BAR ==== */
+/* Line 726: Command bar overlay */
+transition: opacity 0.3s var(--ease-anticipatory);
+
+/* Line 783: Thumbnail items */
+transition: transform 0.3s var(--ease-quick),
+            border-color 0.3s var(--ease-quick),
+            box-shadow 0.3s var(--ease-quick);
+
+/* Line 819: Thumbnail info */
+transition: opacity 0.2s var(--ease-quick);
+
+/* ==== TOAST ==== */
+/* Line 843: Toast */
+transition: opacity 0.3s var(--ease-quick);
+
+/* ==== GRID ITEMS ==== */
+/* Line 924: Grid item images */
+transition: transform 0.6s var(--ease-anticipatory);
+
+/* Line 940: Grid item overlay */
+transition: opacity 0.4s var(--ease-quick),
+            transform 0.4s var(--ease-quick);
+
+/* Line 977: Availability badge */
+transition: transform 0.3s var(--ease-quick);
+
+/* ==== FILTER BUTTONS ==== */
+/* Line 1027: Filter buttons */
+transition: background 0.3s var(--ease-quick),
+            border-color 0.3s var(--ease-quick),
+            color 0.3s var(--ease-quick),
+            transform 0.15s var(--ease-quick);
+
+/* Line 1037: Filter button active - change scale to 0.96 */
+transform: scale(0.96);
+
+/* ==== PAGINATION ==== */
+/* Line 1071-1075: Pagination buttons */
+transition: background-color 0.3s var(--ease-quick),
+            border-color 0.3s var(--ease-quick),
+            color 0.3s var(--ease-quick),
+            transform 0.15s var(--ease-quick),
+            opacity 0.3s var(--ease-quick);
+
+/* Line 1091: Pagination button active - change scale to 0.96 */
+transform: scale(0.96);
+
+/* Line 1109-1112: Page numbers */
+transition: background 0.3s var(--ease-quick),
+            border-color 0.3s var(--ease-quick),
+            color 0.3s var(--ease-quick),
+            transform 0.15s var(--ease-quick);
+
+/* Line 1130: Page number active - change scale to 0.96 */
+transform: scale(0.96);
+
+/* ==== LIGHTBOX ==== */
+/* Line 1173: Lightbox close */
+transition: color 0.3s var(--ease-quick),
+            transform 0.3s var(--ease-quick);
+
+/* Line 1209: Lightbox nav buttons */
+transition: background 0.3s var(--ease-quick),
+            border-color 0.3s var(--ease-quick),
+            color 0.3s var(--ease-quick);
+
+/* Line 1298-1301: Lightbox inquire button */
+transition: background 0.3s var(--ease-quick),
+            color 0.3s var(--ease-quick),
+            border-color 0.3s var(--ease-quick),
+            transform 0.15s var(--ease-quick);
+
+/* Line 1317: Lightbox inquire active - change scale to 0.96 */
+transform: scale(0.96);
+
+/* ==== ABOUT SECTION ==== */
+/* Line 1356: CV link */
+transition: border-color 0.3s var(--ease-quick);
+
+/* ==== CONTACT SECTION ==== */
+/* Line 1397, 1402: Email link */
+transition: color 0.3s var(--ease-quick);
+
+/* Line 1422: Social links */
+transition: color 0.3s var(--ease-quick);
+
+/* ==== BACKGROUND IMAGES ==== */
+/* Line 180: Background image crossfade */
+transition: opacity 1.2s var(--ease-anticipatory);
+
+/* Line 248: Preview image snapping */
+transition: transform 0.25s var(--ease-quick);
+
+/* Line 265: Loading overlay */
+transition: opacity 0.6s var(--ease-anticipatory);

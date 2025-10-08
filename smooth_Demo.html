@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anjelina Villalobos | Interactive Portfolio Demo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-background: #111111;
+            --color-text: #e0e0e0;
+            --color-heading: #ffffff;
+            --color-secondary: #888888;
+            --color-accent: #c2a385;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* --- BASIC SETUP --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--color-background);
+            color: var(--color-text);
+            font-family: var(--font-body);
+            line-height: 1.6;
+        }
+        img { max-width: 100%; display: block; }
+        a { color: var(--color-accent); text-decoration: none; }
+
+        /* --- HERO & HEADER --- */
+        .fullscreen-container {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .background-image-container {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background-color: #222;
+        }
+        .main-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 2rem 3rem;
+            z-index: 10;
+        }
+        .artist-name { font-family: var(--font-heading); font-size: 1.5rem; }
+        .main-header nav a { margin-left: 2rem; font-weight: 600; letter-spacing: 1px; color: white; }
+        .image-title h1 { font-family: var(--font-heading); font-size: clamp(3rem, 8vw, 6rem); }
+        .image-title .image-meta { color: var(--color-secondary); margin-top: 1rem; }
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--color-background);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+        }
+
+        /* --- CONTENT WRAPPER & SECTIONS --- */
+        .content-wrapper { max-width: 1200px; margin: auto; padding: 5rem 2rem; }
+        section { padding: 5rem 0; }
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .section-header h2 { font-family: var(--font-heading); font-size: 3rem; color: var(--color-heading); }
+        
+        /* --- FILTER & PAGINATION --- */
+        .filter-bar { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--color-secondary);
+            color: var(--color-secondary);
+            padding: 0.5rem 1.5rem;
+            font-family: var(--font-body);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover { border-color: var(--color-text); color: var(--color-text); }
+        .filter-btn.active { border-color: var(--color-accent); color: var(--color-accent); }
+
+        .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 3rem; }
+        .pagination-btn { background: none; border: 1px solid var(--color-secondary); color: var(--color-secondary); padding: 0.5rem 1rem; cursor: pointer; transition: all 0.3s; }
+        .pagination-btn:hover:not(:disabled) { border-color: var(--color-text); color: var(--color-text); }
+        .pagination-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .page-number-btn { background: none; border: none; color: var(--color-secondary); font-size: 1.2rem; padding: 0 0.5rem; cursor: pointer; }
+        .page-number-btn.active { color: var(--color-accent); font-weight: 600; }
+        .pagination-info { text-align: center; margin-top: 1rem; color: var(--color-secondary); }
+
+        /* --- PORTFOLIO GRID --- */
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid-item {
+            background: #222;
+            cursor: pointer;
+            overflow: hidden;
+            aspect-ratio: 4/5;
+        }
+        .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .grid-item:hover img { transform: scale(1.05); }
+
+        /* --- LIGHTBOX --- */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            visibility: hidden; /* Controlled by GSAP */
+            opacity: 0;         /* Controlled by GSAP */
+        }
+        .lightbox-content { display: flex; gap: 2rem; max-width: 90vw; max-height: 90vh; width: 1200px; }
+        .lightbox-image-container { flex: 2; display:flex; align-items:center; justify-content:center; }
+        .lightbox-image { max-width: 100%; max-height: 90vh; object-fit: contain; }
+        .lightbox-info { flex: 1; padding: 2rem; background: var(--color-background); overflow-y: auto; }
+        .lightbox-info h2 { font-family: var(--font-heading); color: var(--color-heading); font-size: 2rem; }
+        .lightbox-info p { margin: 1rem 0; }
+        .lightbox-close, .lightbox-nav-btn {
+            position: absolute;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .lightbox-close { top: 2rem; right: 2rem; font-size: 2rem; }
+        .lightbox-nav-btn { top: 50%; transform: translateY(-50%); font-size: 3rem; }
+        .lightbox-nav-btn.prev { left: 2rem; }
+        .lightbox-nav-btn.next { right: 2rem; }
+
+        /* --- ABOUT & CONTACT --- */
+        .about-section { display: flex; align-items: center; gap: 4rem; }
+        .artist-photo { flex: 1; max-width: 400px; }
+        .artist-bio { flex: 2; }
+        .artist-bio h3 { font-family: var(--font-heading); font-size: 2.5rem; color: var(--color-heading); }
+        .contact-section { text-align: center; }
+        .email-link { font-size: 2rem; }
+        .social-links { display:flex; justify-content:center; gap: 2rem; margin-top: 2rem; }
+
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loadingOverlay">LOADING</div>
+
+    <div class="fullscreen-container" id="home">
+        <header class="main-header">
+            <div class="artist-name">Anjelina Villalobos</div>
+            <nav><a href="#portfolio">PORTFOLIO</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav>
+        </header>
+        <div class="image-title">
+            <h1 id="heroTitle">Ephemeral Echo</h1>
+            <div class="image-meta" id="heroMeta">Oil on Canvas, 2024</div>
+        </div>
+    </div>
+
+    <main class="content-wrapper">
+
+        <section id="portfolio">
+            <div class="section-header">
+                <h2>Portfolio</h2>
+            </div>
+            <div class="filter-bar" id="filterBar">
+                <button class="filter-btn active" data-year="all">All</button>
+                <button class="filter-btn" data-year="2024">2024</button>
+                <button class="filter-btn" data-year="2023">2023</button>
+                <button class="filter-btn" data-year="2022">2022</button>
+            </div>
+            <div class="portfolio-grid" id="portfolioGrid"></div>
+            <div class="pagination-controls" id="paginationControls">
+                <button class="pagination-btn prev-btn" id="prevPageBtn">← Previous</button>
+                <div class="page-numbers" id="pageNumbers"></div>
+                <button class="pagination-btn next-btn" id="nextPageBtn">Next →</button>
+            </div>
+            <div class="pagination-info" id="paginationInfo"></div>
+        </section>
+
+        <section id="about" class="about-section">
+            <img src="https://images.unsplash.com/photo-1581094723023-08deed319b0a?q=80&w=800" alt="Portrait of the artist" class="artist-photo">
+            <div class="artist-bio">
+                <h3>About the Artist</h3>
+                <p>Anjelina Villalobos is a contemporary artist whose work explores the intersection of abstract expressionism and digital media. She has been featured in publications like Hi-Fructose and Juxtapoz.</p>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <h2>Get In Touch</h2>
+            <p>For commissions, press inquiries, or to be added to the private mailing list.</p>
+            <a href="mailto:contact@example.com" class="email-link">contact@example.com</a>
+            <div class="social-links">
+                <a>INSTAGRAM</a><a>ARTSY</a><a>TWITTER</a>
+            </div>
+        </section>
+
+    </main>
+    
+    <div class="lightbox-overlay" id="lightboxOverlay">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <button class="lightbox-nav-btn prev" id="lightboxPrev">&lt;</button>
+        <button class="lightbox-nav-btn next" id="lightboxNext">&gt;</button>
+        <div class="lightbox-content">
+            <div class="lightbox-image-container">
+                <img id="lightboxImage" src="" alt="">
+            </div>
+            <div class="lightbox-info">
+                <h2 id="lightboxTitle"></h2>
+                <p id="lightboxMeta"></p>
+                <p id="lightboxDescription"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- 1. DATA & STATE MANAGEMENT ---
+        const portfolioData = (()=>{const t=24;const e=[];for(let a=0;a<t;a++){const t=2024-a%3,r=`https://picsum.photos/seed/${a+1}/600/750`,i=`Artwork Title ${a+1}`;e.push({id:`art-${a+1}`,title:i,year:t,imageUrl:r,medium:"Oil on Canvas",description:`This is a detailed description for ${i}. It explores themes of nature and abstraction, created in ${t}.`})}return e})();
+
+        let state = {
+            filteredArtworks: [...portfolioData],
+            currentPage: 1,
+            itemsPerPage: 6,
+            currentLightboxIndex: 0,
+        };
+
+        // --- 2. DOM ELEMENT SELECTORS ---
+        const DOMElements = {
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            filterBar: document.getElementById('filterBar'),
+            portfolioGrid: document.getElementById('portfolioGrid'),
+            paginationControls: document.getElementById('paginationControls'),
+            prevPageBtn: document.getElementById('prevPageBtn'),
+            nextPageBtn: document.getElementById('nextPageBtn'),
+            pageNumbers: document.getElementById('pageNumbers'),
+            paginationInfo: document.getElementById('paginationInfo'),
+            lightbox: {
+                overlay: document.getElementById('lightboxOverlay'),
+                closeBtn: document.getElementById('lightboxClose'),
+                nextBtn: document.getElementById('lightboxNext'),
+                prevBtn: document.getElementById('lightboxPrev'),
+                image: document.getElementById('lightboxImage'),
+                title: document.getElementById('lightboxTitle'),
+                meta: document.getElementById('lightboxMeta'),
+                description: document.getElementById('lightboxDescription'),
+            }
+        };
+
+        // --- 3. CORE LOGIC FUNCTIONS ---
+
+        function updatePortfolioView() {
+            const { filteredArtworks, currentPage, itemsPerPage } = state;
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageItems = filteredArtworks.slice(startIndex, endIndex);
+
+            renderGrid(pageItems);
+            setupPagination(filteredArtworks);
+        }
+
+        function renderGrid(items) {
+            const grid = DOMElements.portfolioGrid;
+            gsap.to(grid.children, {
+                opacity: 0, scale: 0.95, duration: 0.3, stagger: 0.05,
+                onComplete: () => {
+                    grid.innerHTML = '';
+                    items.forEach(item => {
+                        const gridItem = document.createElement('div');
+                        gridItem.className = 'grid-item';
+                        gridItem.dataset.id = item.id;
+                        gridItem.innerHTML = `<img src="${item.imageUrl}" alt="${item.title}" loading="lazy">`;
+                        grid.appendChild(gridItem);
+                    });
+                    gsap.from(grid.children, { opacity: 0, scale: 0.95, duration: 0.3, stagger: 0.05, delay: 0.1 });
+                }
+            });
+        }
+
+        function setupPagination(items) {
+            const { currentPage, itemsPerPage } = state;
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+            const { pageNumbers, prevPageBtn, nextPageBtn, paginationInfo } = DOMElements;
+
+            pageNumbers.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'page-number-btn';
+                btn.textContent = i;
+                btn.dataset.page = i;
+                if (i === currentPage) btn.classList.add('active');
+                pageNumbers.appendChild(btn);
+            }
+
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+            
+            if (items.length > 0) {
+                 const startItem = (currentPage - 1) * itemsPerPage + 1;
+                 const endItem = Math.min(startItem + itemsPerPage - 1, items.length);
+                 paginationInfo.textContent = `Showing ${startItem} - ${endItem} of ${items.length} works`;
+            } else {
+                paginationInfo.textContent = 'No works to display.';
+            }
+
+            DOMElements.paginationControls.style.display = totalPages > 1 ? 'flex' : 'none';
+        }
+
+        function openLightbox(artworkId) {
+            const artwork = portfolioData.find(item => item.id === artworkId);
+            if (!artwork) return;
+            
+            state.currentLightboxIndex = state.filteredArtworks.findIndex(item => item.id === artworkId);
+
+            const { image, title, meta, description } = DOMElements.lightbox;
+            image.src = artwork.imageUrl;
+            image.alt = artwork.title;
+            title.textContent = artwork.title;
+            meta.textContent = `${artwork.medium}, ${artwork.year}`;
+            description.textContent = artwork.description;
+            
+            gsap.to(DOMElements.lightbox.overlay, { autoAlpha: 1, duration: 0.4 });
+            updateLightboxNav();
+        }
+
+        function closeLightbox() {
+            gsap.to(DOMElements.lightbox.overlay, { autoAlpha: 0, duration: 0.3 });
+        }
+        
+        function updateLightboxNav() {
+            const { filteredArtworks, currentLightboxIndex } = state;
+            DOMElements.lightbox.prevBtn.style.display = currentLightboxIndex > 0 ? 'block' : 'none';
+            DOMElements.lightbox.nextBtn.style.display = currentLightboxIndex < filteredArtworks.length - 1 ? 'block' : 'none';
+        }
+
+        function navigateLightbox(direction) {
+            const newIndex = state.currentLightboxIndex + direction;
+            if (newIndex >= 0 && newIndex < state.filteredArtworks.length) {
+                const nextArtworkId = state.filteredArtworks[newIndex].id;
+                openLightbox(nextArtworkId);
+            }
+        }
+
+        // --- 4. EVENT LISTENERS ---
+
+        function setupEventListeners() {
+            // Filtering
+            DOMElements.filterBar.addEventListener('click', e => {
+                if (!e.target.matches('.filter-btn')) return;
+                const year = e.target.dataset.year;
+                
+                DOMElements.filterBar.querySelector('.active').classList.remove('active');
+                e.target.classList.add('active');
+
+                state.filteredArtworks = (year === 'all')
+                    ? [...portfolioData]
+                    : portfolioData.filter(item => item.year.toString() === year);
+                
+                state.currentPage = 1;
+                updatePortfolioView();
+            });
+
+            // Pagination
+            DOMElements.pageNumbers.addEventListener('click', e => {
+                if (!e.target.matches('.page-number-btn')) return;
+                state.currentPage = Number(e.target.dataset.page);
+                updatePortfolioView();
+            });
+            DOMElements.prevPageBtn.addEventListener('click', () => { if(state.currentPage > 1) { state.currentPage--; updatePortfolioView(); }});
+            DOMElements.nextPageBtn.addEventListener('click', () => { if(state.currentPage < Math.ceil(state.filteredArtworks.length / state.itemsPerPage)) { state.currentPage++; updatePortfolioView(); }});
+
+            // Lightbox
+            DOMElements.portfolioGrid.addEventListener('click', e => {
+                const item = e.target.closest('.grid-item');
+                if (item) openLightbox(item.dataset.id);
+            });
+            DOMElements.lightbox.closeBtn.addEventListener('click', closeLightbox);
+            DOMElements.lightbox.overlay.addEventListener('click', e => { if (e.target === DOMElements.lightbox.overlay) closeLightbox(); });
+            DOMElements.lightbox.prevBtn.addEventListener('click', () => navigateLightbox(-1));
+            DOMElements.lightbox.nextBtn.addEventListener('click', () => navigateLightbox(1));
+        }
+
+
+        // --- 5. INITIALIZATION & ANIMATIONS ---
+
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Hero load animation
+            const tl = gsap.timeline();
+            tl.to(DOMElements.loadingOverlay, { opacity: 0, duration: 1, delay: 0.5, onComplete: () => DOMElements.loadingOverlay.style.display = 'none' })
+              .from('.main-header', { y: -30, opacity: 0, duration: 0.8, ease: 'power2.out' }, "-=0.5")
+              .from('#heroTitle', { y: 50, opacity: 0, duration: 1, ease: 'power2.out' }, "-=0.6")
+              .from('#heroMeta', { y: 20, opacity: 0, duration: 0.8 }, "-=0.7");
+              
+            // Scroll-triggered animations for sections
+            gsap.utils.toArray('section').forEach(section => {
+                gsap.from(section, {
+                    opacity: 0,
+                    y: 100,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: section,
+                        start: 'top 85%',
+                        end: 'bottom 20%',
+                        toggleActions: 'play none none none',
+                    }
+                });
+            });
+        }
+
+        function init() {
+            setupEventListeners();
+            updatePortfolioView();
+            initAnimations();
+        }
+
+        init();
+    });
+    </script>
+</body>
+</html>

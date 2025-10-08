@@ -469,9 +469,38 @@ function getCurrentPageWorks() {
 // Portfolio Grid Builder with Pagination
 // ====================================
 function buildPortfolioGrid() {
-    portfolioGrid.innerHTML = '';
+    const grid = portfolioGrid;
     const works = getCurrentPageWorks();
 
+    // Fade out and scale down current items
+    if (grid.children.length > 0) {
+        gsap.to(grid.children, {
+            opacity: 0,
+            scale: 0.95,
+            duration: 0.3,
+            stagger: 0.05,
+            onComplete: () => {
+                grid.innerHTML = '';
+                renderGridItems(works);
+                // Fade in new items
+                gsap.from(grid.children, {
+                    opacity: 0,
+                    scale: 0.95,
+                    duration: 0.3,
+                    stagger: 0.05,
+                    delay: 0.1
+                });
+            }
+        });
+    } else {
+        // Initial render (no animation needed)
+        renderGridItems(works);
+    }
+
+    updatePagination();
+}
+
+function renderGridItems(works) {
     works.forEach((piece) => {
         const gridItem = document.createElement('article');
         gridItem.className = 'grid-item';
@@ -481,8 +510,23 @@ function buildPortfolioGrid() {
         link.dataset.id = piece.id;
         link.setAttribute('aria-label', `View ${piece.title} in full screen`);
 
+        // Generate responsive image URLs (assumes ?w= query parameter support)
+        const imgSrc = piece.thumbnail_url;
+        const srcset = `
+            ${imgSrc}&w=400 400w,
+            ${imgSrc}&w=600 600w,
+            ${imgSrc}&w=800 800w
+        `.trim();
+
         link.innerHTML = `
-            <img src="${piece.thumbnail_url}" alt="${piece.title}" loading="lazy">
+            <img
+                src="${imgSrc}"
+                srcset="${srcset}"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                alt="${piece.title} - ${piece.medium || 'artwork'} by Anjelina Villalobos"
+                loading="lazy"
+                width="400"
+                height="400">
             <div class="grid-item-overlay">
                 <h3>${piece.title}</h3>
                 <p>${piece.year}</p>
@@ -506,8 +550,6 @@ function buildPortfolioGrid() {
         gridItem.appendChild(link);
         portfolioGrid.appendChild(gridItem);
     });
-
-    updatePagination();
 }
 
 // ====================================
@@ -648,14 +690,37 @@ function openLightbox(index, works) {
     lightboxWorks = works;
 
     updateLightboxContent();
+
+    // Add show class for visibility and keyboard navigation
     lightboxOverlay.classList.add('show');
+
+    // Use GSAP with anticipatory easing and subtle scale for physical feel
+    gsap.to(lightboxOverlay, {
+        autoAlpha: 1,
+        scale: 1,
+        duration: 0.6,
+        ease: 'expo.out'  // Anticipatory easing for major transitions
+    });
 
     // Disable body scroll
     document.body.style.overflow = 'hidden';
 }
 
 function closeLightbox() {
-    lightboxOverlay.classList.remove('show');
+    // Use GSAP with quick easing for dismissal
+    gsap.to(lightboxOverlay, {
+        autoAlpha: 0,
+        scale: 0.95,
+        duration: 0.3,
+        ease: 'power4.out',  // Quick decelerate for dismissal
+        onComplete: () => {
+            // Remove show class after animation completes
+            lightboxOverlay.classList.remove('show');
+            // Reset scale for next open
+            gsap.set(lightboxOverlay, { scale: 0.95 });
+        }
+    });
+
     document.body.style.overflow = '';
 }
 
@@ -667,6 +732,49 @@ function updateLightboxContent() {
     lightboxTitle.textContent = piece.title;
     lightboxMeta.textContent = `${piece.medium}, ${piece.dimensions}, ${piece.year}`;
     lightboxDescription.textContent = piece.description;
+
+    // Update additional fields if they exist in HTML
+    const lightboxTechnique = document.getElementById('lightboxTechnique');
+    const lightboxInspiration = document.getElementById('lightboxInspiration');
+    const lightboxSeries = document.getElementById('lightboxSeries');
+    const lightboxDimensionsNote = document.getElementById('lightboxDimensionsNote');
+
+    // Populate optional fields if data exists
+    if (lightboxTechnique) {
+        if (piece.technique) {
+            lightboxTechnique.textContent = `Technique: ${piece.technique}`;
+            lightboxTechnique.style.display = 'block';
+        } else {
+            lightboxTechnique.style.display = 'none';
+        }
+    }
+
+    if (lightboxInspiration) {
+        if (piece.inspiration) {
+            lightboxInspiration.textContent = `Inspiration: ${piece.inspiration}`;
+            lightboxInspiration.style.display = 'block';
+        } else {
+            lightboxInspiration.style.display = 'none';
+        }
+    }
+
+    if (lightboxSeries) {
+        if (piece.series) {
+            lightboxSeries.textContent = `Series: ${piece.series}`;
+            lightboxSeries.style.display = 'block';
+        } else {
+            lightboxSeries.style.display = 'none';
+        }
+    }
+
+    if (lightboxDimensionsNote) {
+        if (piece.dimensionsNote) {
+            lightboxDimensionsNote.textContent = piece.dimensionsNote;
+            lightboxDimensionsNote.style.display = 'block';
+        } else {
+            lightboxDimensionsNote.style.display = 'none';
+        }
+    }
 
     // Update inquire button
     if (piece.isForSale) {
@@ -791,10 +899,16 @@ function loadHeroImage(index, direction = 'none') {
         // Hide loading overlay if it's the first load
         if (loadingOverlay.classList.contains('hidden') === false) {
             loadingOverlay.classList.add('hidden');
+            // Enable Ken Burns animation after initial load completes
+            setTimeout(() => {
+                currentBg.classList.add('animated');
+            }, 1500);
         }
 
-        // Update previews
-        updatePreviews();
+        // Update previews (lazy load on first interaction)
+        if (index > 0) {
+            updatePreviews();
+        }
 
         // Update command bar if open
         if (commandBar.classList.contains('show')) {
@@ -841,10 +955,25 @@ function showPrevHeroImage() {
 }
 
 // ====================================
-// Drag/Swipe Navigation
+// Drag/Swipe Navigation (Lazy Initialized)
 // ====================================
+let dragSystemInitialized = false;
+
+function initializeDragSystem() {
+    if (dragSystemInitialized) return;
+    dragSystemInitialized = true;
+
+    // Initialize preview images
+    updatePreviews();
+}
+
 function handleDragStart(e) {
     if (isTransitioning) return;
+
+    // Lazy initialize drag system on first interaction
+    if (!dragSystemInitialized) {
+        initializeDragSystem();
+    }
 
     isDragging = true;
     container.classList.add('dragging');
@@ -1098,7 +1227,7 @@ document.getElementById('contextualTipClose').addEventListener('click', () => {
 });
 
 // ====================================
-// Initialization
+// Initialization - Optimized Load Sequence
 // ====================================
 document.addEventListener('DOMContentLoaded', () => {
     // Extract featured works for hero carousel
@@ -1107,26 +1236,30 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(`Total artworks: ${portfolioData.length}`);
     console.log(`Featured works (hero carousel): ${featuredWorks.length}`);
 
-    // Set loading blur to first featured image
-    if (featuredWorks.length > 0) {
-        loadingBlur.style.backgroundImage = `url('${featuredWorks[0].thumbnail_url}')`;
-    }
-
-    // Build portfolio grid (paginated, shows all works)
-    buildPortfolioGrid();
-
-    // Build thumbnail grid (shows only featured works)
-    buildThumbnailGrid();
-
-    // Load first featured image in hero carousel
+    // Load first featured image IMMEDIATELY (priority)
     if (featuredWorks.length > 0) {
         loadHeroImage(0);
     }
 
+    // Defer heavy features until after hero loads
+    setTimeout(() => {
+        // Build portfolio grid (paginated, shows all works)
+        buildPortfolioGrid();
+
+        // Build thumbnail grid (shows only featured works)
+        buildThumbnailGrid();
+
+        // Show gallery hint button
+        const galleryHint = document.getElementById('galleryHint');
+        if (galleryHint) {
+            galleryHint.classList.add('visible');
+        }
+    }, 800);
+
     // Show contextual tip after a delay
     setTimeout(() => {
         showContextualTip();
-    }, 2000);
+    }, 3000);
 
     // Show toast hint after a longer delay
     setTimeout(() => {
@@ -1134,7 +1267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('Pro Tip: Press G to view the full gallery.', 4000);
             sessionStorage.setItem('toastShown', 'true');
         }
-    }, 5000);
+    }, 6000);
 });
 
 // ====================================
@@ -1180,5 +1313,148 @@ function preloadImages() {
     }, 1000);
 }
 
-// Preload images after initial load
-setTimeout(preloadImages, 2000);
+// Preload images after initial load (deferred further for smoother experience)
+setTimeout(preloadImages, 4000);
+
+// ====================================
+// GSAP Animations
+// ====================================
+function initGSAPAnimations() {
+    // Check if GSAP and ScrollTrigger are loaded
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        console.warn('GSAP or ScrollTrigger not loaded');
+        return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Initial load animation sequence with perfected easing
+    const loadTimeline = gsap.timeline();
+    loadTimeline
+        .to(loadingOverlay, {
+            opacity: 0,
+            duration: 1,
+            delay: 0.5,
+            ease: 'expo.out',  // Anticipatory easing for major transition
+            onComplete: () => {
+                loadingOverlay.classList.add('hidden');
+            }
+        })
+        .from('.main-header', {
+            y: -30,
+            opacity: 0,
+            duration: 0.8,
+            ease: 'expo.out'  // Smooth, dramatic entrance
+        }, "-=0.5")
+        .from('.image-title h1', {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: 'expo.out'  // Smooth, impactful reveal
+        }, "-=0.6")
+        .from('.image-meta', {
+            y: 20,
+            opacity: 0,
+            duration: 0.8,
+            ease: 'power4.out'  // Quick, subtle entrance
+        }, "-=0.7");
+
+    // Animate section headers on scroll with anticipatory easing
+    gsap.utils.toArray('.section-header').forEach(header => {
+        gsap.from(header, {
+            scrollTrigger: {
+                trigger: header,
+                start: 'top 85%',
+                end: 'bottom 20%',
+                toggleActions: 'play none none none'
+            },
+            opacity: 0,
+            y: 100,
+            duration: 1.2,
+            ease: 'expo.out'  // Dramatic, smooth entrance
+        });
+    });
+
+    // Animate about section with staggered, smooth entrances
+    gsap.from('.artist-photo', {
+        scrollTrigger: {
+            trigger: '.about-section',
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+        },
+        opacity: 0,
+        y: 100,
+        scale: 0.95,
+        duration: 1.2,
+        ease: 'expo.out'  // Physical, anticipatory entrance
+    });
+
+    gsap.from('.artist-bio', {
+        scrollTrigger: {
+            trigger: '.about-section',
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+        },
+        opacity: 0,
+        y: 100,
+        duration: 1.2,
+        ease: 'expo.out',  // Smooth, matched with photo
+        delay: 0.1  // Slight stagger for sophistication
+    });
+
+    // Animate contact section with refined easing
+    gsap.from('.contact-section', {
+        scrollTrigger: {
+            trigger: '.contact-section',
+            start: 'top 85%',
+            end: 'bottom 20%',
+            toggleActions: 'play none none none'
+        },
+        opacity: 0,
+        y: 100,
+        duration: 1.2,
+        ease: 'expo.out'  // Consistent, dramatic entrance
+    });
+}
+
+// Portfolio grid animation with perfected fade/scale stagger
+function animatePortfolioGrid() {
+    const grid = portfolioGrid;
+
+    // Fade out current items with quick, snappy easing
+    gsap.to(grid.children, {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.3,
+        stagger: 0.03,  // Tighter stagger for more responsive feel
+        ease: 'power4.out',  // Quick decelerate
+        onComplete: () => {
+            // Grid content will be replaced by buildPortfolioGrid
+            // Then fade in new items with anticipatory easing
+            gsap.from(grid.children, {
+                opacity: 0,
+                scale: 0.95,
+                duration: 0.4,
+                stagger: 0.03,
+                ease: 'expo.out',  // Anticipatory, dramatic entrance
+                delay: 0.1
+            });
+        }
+    });
+}
+
+// Initialize animations after DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(initGSAPAnimations, 100);
+    });
+} else {
+    setTimeout(initGSAPAnimations, 100);
+}
+
+// Refresh ScrollTrigger when portfolio grid changes
+function refreshScrollTrigger() {
+    if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+    }
+}

@@ -4,65 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="referrer" content="no-referrer">
-
-    <!-- Primary Meta Tags -->
-    <title>Anjelina Villalobos | Contemporary Artist & Painter</title>
-    <meta name="title" content="Anjelina Villalobos | Contemporary Artist & Painter">
-    <meta name="description" content="Contemporary artist exploring abstract expressionism and digital media. View original paintings, prints, and commissioned work. Featured in Hi-Fructose and Juxtapoz.">
-    <meta name="keywords" content="contemporary artist, abstract art, painter, fine art, original paintings, art portfolio, Anjelina Villalobos">
-    <meta name="author" content="Anjelina Villalobos">
+    <meta name="description" content="Anjelina Villalobos - Digital Artist Portfolio">
+    <meta name="author" content="Jared Apper">
     <meta name="theme-color" content="#111111">
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://anjelinavillalobos.com/">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://anjelinavillalobos.com/">
-    <meta property="og:title" content="Anjelina Villalobos | Contemporary Artist & Painter">
-    <meta property="og:description" content="Contemporary artist exploring abstract expressionism and digital media. View original paintings, prints, and commissioned work.">
-    <meta property="og:image" content="https://anjelinavillalobos.com/assets/og-image.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://anjelinavillalobos.com/">
-    <meta name="twitter:title" content="Anjelina Villalobos | Contemporary Artist & Painter">
-    <meta name="twitter:description" content="Contemporary artist exploring abstract expressionism and digital media. View original paintings, prints, and commissioned work.">
-    <meta name="twitter:image" content="https://anjelinavillalobos.com/assets/og-image.jpg">
-
-    <!-- Favicon -->
+    <title>Anjelina Villalobos | Portfolio</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;600&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/ultimate-portfolio.css">
-
-    <!-- Schema.org Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "@id": "https://anjelinavillalobos.com/#person",
-        "name": "Anjelina Villalobos",
-        "jobTitle": "Contemporary Artist",
-        "description": "Contemporary artist whose work explores the intersection of abstract expressionism and digital media.",
-        "url": "https://anjelinavillalobos.com",
-        "image": "https://anjelinavillalobos.com/assets/artist-photo.jpg",
-        "sameAs": [
-            "https://instagram.com/anjelinavillalobos",
-            "https://artsy.net/artist/anjelina-villalobos"
-        ],
-        "worksFor": {
-            "@type": "Organization",
-            "name": "Independent Artist"
-        },
-        "knowsAbout": ["Abstract Expressionism", "Contemporary Art", "Painting", "Digital Media"],
-        "award": ["Featured in Hi-Fructose", "Featured in Juxtapoz"]
-    }
-    </script>
 </head>
 <body>
     <a href="#main-image" class="skip-link">Skip to gallery</a>
@@ -71,8 +22,10 @@
     <div class="fullscreen-container" id="container">
 
         <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-blur" id="loadingBlur"></div>
             <div class="loading-content">
-                <div class="loading-text">LOADING</div>
+                <div class="loading-text">LOADING...</div>
+                <div class="loading-hint">Pro tip: Press <kbd>G</kbd> for gallery view</div>
             </div>
         </div>
 
@@ -152,15 +105,15 @@
             </div>
 
             <!-- Year Filter Bar -->
-            <div class="filter-bar" id="filterBar" role="toolbar" aria-label="Filter artworks by year">
-                <button class="filter-btn active" data-year="all" aria-pressed="true">All</button>
-                <button class="filter-btn" data-year="2024" aria-pressed="false">2024</button>
-                <button class="filter-btn" data-year="2023" aria-pressed="false">2023</button>
-                <button class="filter-btn" data-year="2022" aria-pressed="false">2022</button>
+            <div class="filter-bar" id="filterBar">
+                <button class="filter-btn active" data-year="all">All</button>
+                <button class="filter-btn" data-year="2024">2024</button>
+                <button class="filter-btn" data-year="2023">2023</button>
+                <button class="filter-btn" data-year="2022">2022</button>
             </div>
 
             <!-- Portfolio Grid -->
-            <div class="portfolio-grid" id="portfolioGrid" role="region" aria-label="Portfolio artworks">
+            <div class="portfolio-grid" id="portfolioGrid">
                 <!-- Grid items will be dynamically generated -->
             </div>
 
@@ -183,33 +136,27 @@
         </section>
 
         <!-- About Section -->
-        <section id="about" class="about-section" aria-labelledby="about-heading">
-            <img
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&fm=webp"
-                alt="Portrait of Anjelina Villalobos, contemporary artist"
-                class="artist-photo"
-                loading="lazy"
-                width="800"
-                height="800">
+        <section id="about" class="about-section">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&fm=webp" alt="Anjelina Villalobos" class="artist-photo">
             <div class="artist-bio">
-                <h3 id="about-heading">About the Artist</h3>
+                <h3>About the Artist</h3>
                 <p>Anjelina Villalobos is a contemporary artist whose work explores the intersection of abstract expressionism and digital media. Her pieces challenge traditional boundaries between painting and technology.</p>
                 <p>With a background in fine arts and a passion for experimentation, Anjelina creates immersive visual experiences that invite viewers to explore color, form, and emotion.</p>
                 <p>She has been featured in publications like Hi-Fructose and Juxtapoz, with solo shows in New York, Los Angeles, and London.</p>
-                <a href="/cv.pdf" class="cv-link" aria-label="Download full curriculum vitae PDF">VIEW FULL CURRICULUM VITAE</a>
+                <a href="/cv.pdf" class="cv-link">VIEW FULL CURRICULUM VITAE</a>
             </div>
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="contact-section" aria-labelledby="contact-heading">
-            <h2 id="contact-heading" class="section-title">Get In Touch</h2>
+        <section id="contact" class="contact-section">
+            <h2 class="section-title">Get In Touch</h2>
             <p class="contact-intro">For commissions, press inquiries, or to be added to the private mailing list for upcoming shows and available work, please reach out directly.</p>
-            <a href="mailto:contact@anjelinavillalobos.com" class="email-link" aria-label="Email Anjelina Villalobos">contact@anjelinavillalobos.com</a>
-            <nav class="social-links" aria-label="Social media links">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Follow on Instagram">INSTAGRAM</a>
-                <a href="https://artsy.net" target="_blank" rel="noopener noreferrer" aria-label="View collection on Artsy">ARTSY</a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Follow on Twitter">TWITTER</a>
-            </nav>
+            <a href="mailto:contact@anjelinavillalobos.com" class="email-link">contact@anjelinavillalobos.com</a>
+            <div class="social-links">
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
+                <a href="https://artsy.net" target="_blank" rel="noopener noreferrer">ARTSY</a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">TWITTER</a>
+            </div>
         </section>
 
         <!-- Footer -->
@@ -262,21 +209,12 @@
                 <h2 id="lightboxTitle"></h2>
                 <p id="lightboxMeta"></p>
                 <p id="lightboxDescription"></p>
-                <p id="lightboxTechnique"></p>
-                <p id="lightboxInspiration"></p>
-                <p id="lightboxSeries"></p>
-                <p id="lightboxDimensionsNote"></p>
                 <button class="lightbox-inquire-btn" id="lightboxInquireBtn" style="display: none;"></button>
             </div>
         </div>
     </div>
 
-    <!-- GSAP + ScrollTrigger for animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-    <!-- Modular Portfolio Application -->
-    <script type="module" src="scripts/modules/main.js"></script>
+    <script src="scripts/ultimate-portfolio.js"></script>
 
 </body>
 </html>

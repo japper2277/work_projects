@@ -2,70 +2,7 @@ Of course. Here is an in-depth, feature-by-feature guide on the technical implem
 
 -----
 
-### \#\# 1. The Immersive Narrative 🎬
-
-This is about turning passive viewing into an active, story-driven experience.
-
-#### **Interactive Genesis (Artwork Timeline)**
-
-This feature allows users to see an artwork's creation process.
-
-  * **Data Structure:** In your Headless CMS (like Sanity.io or Contentful) or local data file, your artwork object needs an array for the stages.
-    ```javascript
-    // artworkObject.js
-    stages: [
-        { stage: 'Sketch', url: 'path/to/art-sketch.jpg' },
-        { stage: 'Inking', url: 'path/to/art-ink.jpg' },
-        { stage: 'Color Base', url: 'path/to/art-color.jpg' },
-        { stage: 'Final Details', url: 'path/to/art-final.jpg' }
-    ]
-    ```
-  * **HTML/CSS:** Create a container with `position: relative`. Place multiple `<img>` tags inside, one for each stage, layered on top of each other. Initially, all but the first image have `opacity: 0`. You will also need a range slider.
-    ```html
-    <div class="genesis-viewer">
-        <img src="..." class="genesis-stage" style="opacity: 1;">
-        <img src="..." class="genesis-stage" style="opacity: 0;">
-        </div>
-    <input type="range" id="genesisSlider" min="0" max="3" step="1" value="0">
-    ```
-  * **JavaScript:** Use an event listener on the slider. When its value changes, you'll fade out the currently visible image and fade in the image corresponding to the new slider value. **GSAP (GreenSock Animation Platform)** is perfect for this.
-    ```javascript
-    const slider = document.getElementById('genesisSlider');
-    const stages = document.querySelectorAll('.genesis-stage');
-
-    slider.addEventListener('input', (e) => {
-        const index = parseInt(e.target.value, 10);
-        // Fade out all images
-        gsap.to(stages, { opacity: 0, duration: 0.5 });
-        // Fade in the target image
-        gsap.to(stages[index], { opacity: 1, duration: 0.5 });
-    });
-    ```
-
------
-
-#### **"Director's Cut" Annotations**
-
-This feature provides insights directly on the artwork.
-
-  * **Data Structure:** The artwork object needs an array of annotation objects, each with coordinates and text.
-    ```javascript
-    // artworkObject.js
-    annotations: [
-        { x: 85, y: 40, text: 'This subtle gradient was achieved with...' },
-        { x: 20, y: 65, text: 'A hidden reference to my earlier work.' }
-    ]
-    ```
-  * **HTML/CSS:** The main image container must have `position: relative`. Each annotation point will be an absolutely positioned `<div>` (a "dot") placed using the `%` coordinates. The tooltip `<div>` will also be absolutely positioned and initially hidden.
-  * **JavaScript:**
-    1.  On page load, loop through the `annotations` array for the current artwork.
-    2.  For each annotation, dynamically create a "dot" `div` and a "tooltip" `div`.
-    3.  Append them to the image container.
-    4.  Add `mouseenter` and `mouseleave` event listeners to each dot. On mouseenter, use GSAP to animate the corresponding tooltip to `opacity: 1` and update its position next to the cursor. On mouseleave, fade it out.
-
------
-
-### \#\# 2. The Living Archive 🏛️
+### \#\# 1. The Living Archive 🏛️
 
 This transforms the portfolio from a simple grid into an explorable map.
 
@@ -121,7 +58,7 @@ This is surprisingly straightforward with modern tools.
 
 -----
 
-### \#\# 3. Technical and Aesthetic Excellence ✨
+### \#\# 2. Technical and Aesthetic Excellence ✨
 
 This is about the polish that makes a site feel truly premium.
 
