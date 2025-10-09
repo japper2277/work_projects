@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anjelina Villalobos | Portfolio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --cursor-size: 24px; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #111; color: #fff;
+            font-family: 'Special Elite', monospace;
+            cursor: none;
+        }
+
+        /* --- FEATURE 2: Context-Aware Cursor --- */
+        .custom-cursor {
+            position: fixed;
+            width: var(--cursor-size);
+            height: var(--cursor-size);
+            border: 2px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .custom-cursor.hover { transform: translate(-50%, -50%) scale(1.5); }
+        .custom-cursor.context-active {
+            width: auto; height: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-color: transparent;
+            padding: 8px 16px;
+            border-radius: 20px;
+            mix-blend-mode: normal;
+        }
+        .cursor-text {
+            color: #111;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .context-active .cursor-text { opacity: 1; }
+
+        .fullscreen-container { position: relative; width: 100%; height: 100%; }
+
+        /* --- FEATURE 3: Interactive Transitions --- */
+        .background-image {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center center;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .background-image.active { opacity: 1; }
+
+        body::before { /* Noise Overlay */
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1000; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.15; mix-blend-mode: overlay;
+        }
+        
+        /* UI Elements (Header, Title, etc.) */
+        .ui-layer {
+            position: absolute; inset: 0; z-index: 100;
+            pointer-events: none; /* Let clicks pass through */
+        }
+        .ui-layer > * { pointer-events: auto; }
+        .main-header, .image-title { position: absolute; padding: 2rem; }
+        .main-header { top: 0; left: 0; right: 0; display: flex; justify-content: space-between; }
+        .image-title { bottom: 0; left: 0; }
+        .image-title h1, .image-title .meta { transition: opacity 0.4s ease, transform 0.4s ease; }
+        .hidden-ui h1, .hidden-ui .meta { opacity: 0; transform: translateY(10px); }
+
+        /* --- FEATURE 1: Command Bar Thumbnail Grid --- */
+        .command-bar-overlay {
+            position: fixed; inset: 0;
+            background-color: rgba(10, 10, 10, 0.5);
+            backdrop-filter: blur(16px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .command-bar-overlay.visible { opacity: 1; pointer-events: auto; }
+        .command-bar {
+            width: 80%;
+            max-width: 1200px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .thumbnail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+        .thumbnail {
+            aspect-ratio: 4 / 3;
+            background-size: cover; background-position: center;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .thumbnail:hover { transform: scale(1.05); }
+        .thumbnail.focused { border-color: white; }
+
+    </style>
+</head>
+<body>
+
+    <div class="custom-cursor"><span class="cursor-text"></span></div>
+    <div class="fullscreen-container"></div>
+    <div class="ui-layer">
+        <header class="main-header">
+            <div class="artist-name">ANJELINA VILLALOBOS</div>
+        </header>
+        <div class="image-title">
+            <h1 id="imgTitle"></h1>
+            <div class="image-meta" id="imgMeta"></div>
+        </div>
+    </div>
+    <div class="command-bar-overlay" id="commandBar">
+        <div class="command-bar">
+            <div class="thumbnail-grid" id="thumbnailGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gallery = [
+                { year: 2024, image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1920', title: 'Ethereal Light', medium: 'Digital Art' },
+                { year: 2024, image: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=1920', title: 'Urban Dreams', medium: 'Mixed Media' },
+                { year: 2023, image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=1920', title: 'Neon Nights', medium: 'Photography' },
+                { year: 2023, image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1920', title: 'Chromatic Study', medium: 'Digital Art' },
+                { year: 2022, image: 'https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?q=80&w=1920', title: 'Infinite Horizon', medium: 'Photography' }
+            ];
+            let currentIndex = 0;
+            let isDragging = false;
+            let startX;
+            let dragOffset = 0;
+
+            const container = document.querySelector('.fullscreen-container');
+            const imgTitle = document.getElementById('imgTitle');
+            const imgMeta = document.getElementById('imgMeta');
+            const cursor = document.querySelector('.custom-cursor');
+            const cursorText = document.querySelector('.cursor-text');
+            const commandBar = document.getElementById('commandBar');
+            const thumbnailGrid = document.getElementById('thumbnailGrid');
+            let contextTimeout;
+
+            // --- Core Image Change Logic ---
+            let currentImageDiv;
+            function updateImage(newIndex, isInstant = false) {
+                currentIndex = newIndex;
+                const item = gallery[currentIndex];
+                
+                const newImageDiv = document.createElement('div');
+                newImageDiv.className = 'background-image';
+                newImageDiv.style.backgroundImage = `url('${item.image}')`;
+                container.appendChild(newImageDiv);
+
+                setTimeout(() => newImageDiv.classList.add('active'), 10);
+                
+                if (currentImageDiv) {
+                    currentImageDiv.classList.remove('active');
+                    setTimeout(() => container.removeChild(currentImageDiv), 800);
+                }
+                currentImageDiv = newImageDiv;
+
+                // Update text
+                document.querySelector('.image-title').classList.add('hidden-ui');
+                setTimeout(() => {
+                    imgTitle.textContent = item.title;
+                    imgMeta.textContent = `${item.year} · ${item.medium}`;
+                    document.querySelector('.image-title').classList.remove('hidden-ui');
+                }, isInstant ? 0 : 400);
+            }
+
+            // --- Feature 2: Context-Aware Cursor ---
+            window.addEventListener('mousemove', e => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                cursor.classList.remove('context-active');
+                cursorText.textContent = '';
+                clearTimeout(contextTimeout);
+                
+                contextTimeout = setTimeout(() => {
+                    const item = gallery[currentIndex];
+                    cursorText.textContent = `${item.title} · ${item.medium}`;
+                    cursor.classList.add('context-active');
+                }, 1000);
+            });
+
+            // --- Feature 3: Interactive Transitions (Drag) ---
+            container.addEventListener('mousedown', e => {
+                isDragging = true;
+                startX = e.clientX;
+                container.style.cursor = 'grabbing';
+                currentImageDiv.style.transition = 'none';
+            });
+
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                dragOffset = e.clientX - startX;
+                currentImageDiv.style.transform = `translateX(${dragOffset}px)`;
+            });
+
+            window.addEventListener('mouseup', e => {
+                if (!isDragging) return;
+                isDragging = false;
+                container.style.cursor = 'none';
+                currentImageDiv.style.transition = 'transform 0.4s ease';
+
+                if (Math.abs(dragOffset) > 100) { // Swipe threshold
+                    navigate(dragOffset < 0 ? 1 : -1);
+                } else {
+                    currentImageDiv.style.transform = 'translateX(0px)';
+                }
+                dragOffset = 0;
+            });
+            
+            function navigate(direction) {
+                const newIndex = (currentIndex + direction + gallery.length) % gallery.length;
+                updateImage(newIndex);
+            }
+
+            // --- Feature 1: Command Bar ---
+            thumbnailGrid.innerHTML = gallery.map((item, index) => 
+                `<div class="thumbnail" data-index="${index}" style="background-image: url('${item.image}')"></div>`
+            ).join('');
+
+            thumbnailGrid.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    commandBar.classList.remove('visible');
+                    updateImage(parseInt(thumb.dataset.index));
+                });
+            });
+
+            window.addEventListener('keydown', e => {
+                if (e.code === 'Space' || e.key === 'g') {
+                    e.preventDefault();
+                    commandBar.classList.toggle('visible');
+                }
+                if (e.key === 'Escape' && commandBar.classList.contains('visible')) {
+                    commandBar.classList.remove('visible');
+                }
+                if (!commandBar.classList.contains('visible')) {
+                    if (e.key === 'ArrowLeft') navigate(-1);
+                    if (e.key === 'ArrowRight') navigate(1);
+                }
+            });
+            
+            // Initial Load
+            updateImage(0, true);
+        });
+    </script>
+</body>
+</html>
