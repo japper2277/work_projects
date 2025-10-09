@@ -63,11 +63,11 @@ export class Carousel {
             if (e.key === 'ArrowRight') this.nextImage();
         });
 
-        // Pause autoplay on hover
+        // Pause autoplay on hover (don't restart on leave)
         const heroSection = document.querySelector('.hero');
         if (heroSection) {
             heroSection.addEventListener('mouseenter', () => this.stopAutoPlay());
-            heroSection.addEventListener('mouseleave', () => this.startAutoPlay());
+            // Don't restart autoplay on mouseleave - once stopped, stay stopped
         }
 
         // Touch swipe support
@@ -178,14 +178,14 @@ export class Carousel {
         this.stopAutoPlay();
         const nextIndex = (this.currentIndex + 1) % this.featuredWorks.length;
         this.loadFeaturedImage(nextIndex);
-        this.startAutoPlay();
+        // Don't restart autoplay after manual navigation
     }
 
     prevImage() {
         this.stopAutoPlay();
         const prevIndex = (this.currentIndex - 1 + this.featuredWorks.length) % this.featuredWorks.length;
         this.loadFeaturedImage(prevIndex);
-        this.startAutoPlay();
+        // Don't restart autoplay after manual navigation
     }
 
     startAutoPlay() {

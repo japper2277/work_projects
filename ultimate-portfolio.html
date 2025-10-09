@@ -126,19 +126,23 @@
         </main>
 
         <button class="gallery-hint" id="galleryHint" aria-label="Open gallery overview" title="Gallery Overview">
-            <svg class="hint-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="0" y="0" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
-                <rect x="9" y="0" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
-                <rect x="0" y="9" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
-                <rect x="9" y="9" width="7" height="7" stroke="currentColor" stroke-width="1.5"/>
+            <!-- Custom artistic icon: organic brushstroke frames -->
+            <svg class="hint-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Top-left organic frame -->
+                <path d="M1 1C1 1 2.5 1.2 4 2.5C5 3.5 5.5 5 5.5 5.5L1 1Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Top-right organic frame -->
+                <path d="M19 1C19 1 17.5 1.2 16 2.5C15 3.5 14.5 5 14.5 5.5L19 1Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Bottom-left organic frame -->
+                <path d="M1 19C1 19 2.5 18.8 4 17.5C5 16.5 5.5 15 5.5 14.5L1 19Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Bottom-right organic frame -->
+                <path d="M19 19C19 19 17.5 18.8 16 17.5C15 16.5 14.5 15 14.5 14.5L19 19Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Center accent dots for visual interest -->
+                <circle cx="10" cy="10" r="1" fill="currentColor" opacity="0.6"/>
+                <circle cx="7" cy="10" r="0.5" fill="currentColor" opacity="0.4"/>
+                <circle cx="13" cy="10" r="0.5" fill="currentColor" opacity="0.4"/>
             </svg>
             <span class="hint-text"></span>
         </button>
-
-        <div class="contextual-tip" id="contextualTip">
-            <button class="contextual-tip-close" id="contextualTipClose">×</button>
-            <span id="contextualTipText">Press ← → to navigate images</span>
-        </div>
 
     </div>
 
@@ -182,21 +186,185 @@
             </div>
         </section>
 
-        <!-- About Section -->
+        <!-- About Section - Editorial Magazine Style -->
         <section id="about" class="about-section" aria-labelledby="about-heading">
-            <img
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&fm=webp"
-                alt="Portrait of Anjelina Villalobos, contemporary artist"
-                class="artist-photo"
-                loading="lazy"
-                width="800"
-                height="800">
-            <div class="artist-bio">
-                <h3 id="about-heading">About the Artist</h3>
-                <p>Anjelina Villalobos is a contemporary artist whose work explores the intersection of abstract expressionism and digital media. Her pieces challenge traditional boundaries between painting and technology.</p>
-                <p>With a background in fine arts and a passion for experimentation, Anjelina creates immersive visual experiences that invite viewers to explore color, form, and emotion.</p>
-                <p>She has been featured in publications like Hi-Fructose and Juxtapoz, with solo shows in New York, Los Angeles, and London.</p>
-                <a href="/cv.pdf" class="cv-link" aria-label="Download full curriculum vitae PDF">VIEW FULL CURRICULUM VITAE</a>
+
+            <!-- Hero Image Block -->
+            <div class="about-hero">
+                <div class="about-hero-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?q=80&w=1400&fm=webp"
+                        alt="Anjelina Villalobos in her studio, surrounded by canvases and gestural paint marks"
+                        class="artist-photo-large"
+                        loading="lazy"
+                        width="1400"
+                        height="900">
+                    <div class="image-caption">
+                        <span class="caption-text">Studio, Brooklyn — 2024</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="about-content-grid">
+
+                <!-- Main Bio Column -->
+                <div class="bio-main">
+                    <h2 id="about-heading" class="about-main-heading">Anjelina Villalobos</h2>
+
+                    <div class="about-intro">
+                        <p class="lead-text">Working at the volatile intersection of chaos and control, Anjelina Villalobos constructs visceral narratives through layered abstraction—where digital precision collides with gestural abandon.</p>
+                    </div>
+
+                    <div class="bio-body">
+                        <p>Born in Los Angeles in 1989, Villalobos emerged from the early 2010s street art scene before pivoting to studio practice. Her work interrogates the tension between analog mark-making and computational systems, often building paintings through dozens of translucent layers that suggest depth, memory, and digital glitch artifacts.</p>
+
+                        <p>Rather than depicting technology, she <em>performs</em> it—using painting as a slow, deliberate response to the speed and compression of digital life. Each canvas becomes an archaeological site: traces of previous iterations bleed through, creating what she calls "temporal collisions."</p>
+
+                        <blockquote class="pull-quote">
+                            "I'm not interested in making paintings about screens. I'm interested in making paintings that feel like what it's like to live with screens—fragmented, layered, haunted by what came before."
+                        </blockquote>
+
+                        <p>Her process is ritualistic. She begins each work digitally, generating algorithmic color palettes and compositional scaffolds, then abandons the screen entirely. The paintings emerge through weeks of additive and subtractive mark-making: pouring, scraping, sanding back to earlier layers, building up again. What remains is neither purely digital nor analog, but exists in productive tension between both.</p>
+                    </div>
+
+                    <!-- Expandable Sections -->
+                    <div class="about-expandable-sections">
+
+                        <!-- Philosophy Section -->
+                        <div class="expandable-section">
+                            <button class="section-toggle" aria-expanded="false" aria-controls="philosophy-content">
+                                <span class="toggle-label">Artistic Philosophy</span>
+                                <span class="toggle-icon" aria-hidden="true">+</span>
+                            </button>
+                            <div class="section-content" id="philosophy-content" hidden>
+                                <p>Villalobos describes her practice as "painting after the internet"—a term she uses not chronologically, but conceptually. Her work acknowledges that painting can no longer pretend the digital realm doesn't exist, yet refuses to be subsumed by it.</p>
+                                <p>"Every painting is a small rebellion against immediacy," she explains. "I'm drawn to processes that can't be undone with Command-Z. There's a permanence to analog error that I find generative. The digital allows infinite revisions; painting forces commitment."</p>
+                                <p>Her studio practice incorporates meditation, long periods of observation, and intentional technological disconnection. She views each painting as a "slow artifact" in opposition to the velocity of contemporary image culture.</p>
+                            </div>
+                        </div>
+
+                        <!-- Exhibition History -->
+                        <div class="expandable-section">
+                            <button class="section-toggle" aria-expanded="false" aria-controls="exhibitions-content">
+                                <span class="toggle-label">Selected Exhibitions</span>
+                                <span class="toggle-icon" aria-hidden="true">+</span>
+                            </button>
+                            <div class="section-content" id="exhibitions-content" hidden>
+                                <div class="exhibition-list">
+                                    <div class="exhibition-item">
+                                        <span class="exhibition-year">2024</span>
+                                        <div class="exhibition-details">
+                                            <strong>Temporal Collisions</strong> (Solo)<br>
+                                            Lehmann Maupin, New York
+                                        </div>
+                                    </div>
+                                    <div class="exhibition-item">
+                                        <span class="exhibition-year">2023</span>
+                                        <div class="exhibition-details">
+                                            <strong>After the Interface</strong> (Group)<br>
+                                            Saatchi Gallery, London
+                                        </div>
+                                    </div>
+                                    <div class="exhibition-item">
+                                        <span class="exhibition-year">2023</span>
+                                        <div class="exhibition-details">
+                                            <strong>Signal/Noise</strong> (Solo)<br>
+                                            Night Gallery, Los Angeles
+                                        </div>
+                                    </div>
+                                    <div class="exhibition-item">
+                                        <span class="exhibition-year">2022</span>
+                                        <div class="exhibition-details">
+                                            <strong>New Abstraction</strong> (Group)<br>
+                                            Hauser & Wirth, Somerset
+                                        </div>
+                                    </div>
+                                    <div class="exhibition-item">
+                                        <span class="exhibition-year">2021</span>
+                                        <div class="exhibition-details">
+                                            <strong>Painter Painter</strong> (Group)<br>
+                                            Walker Art Center, Minneapolis
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recognition & Collections -->
+                        <div class="expandable-section">
+                            <button class="section-toggle" aria-expanded="false" aria-controls="recognition-content">
+                                <span class="toggle-label">Recognition & Collections</span>
+                                <span class="toggle-icon" aria-hidden="true">+</span>
+                            </button>
+                            <div class="section-content" id="recognition-content" hidden>
+                                <p><strong>Select Press & Features:</strong></p>
+                                <ul class="recognition-list">
+                                    <li><em>Artforum</em> — "Artists to Watch" (2023)</li>
+                                    <li><em>Juxtapoz</em> — Cover Feature (Winter 2023)</li>
+                                    <li><em>Hi-Fructose</em> — Studio Visit (Vol. 58)</li>
+                                    <li><em>The New York Times</em> — "Painting's Digital Turn" (2022)</li>
+                                    <li><em>Frieze</em> — Critics' Picks (May 2022)</li>
+                                </ul>
+
+                                <p><strong>Public & Private Collections:</strong></p>
+                                <ul class="recognition-list">
+                                    <li>Los Angeles County Museum of Art (LACMA)</li>
+                                    <li>Museum of Contemporary Art, Chicago</li>
+                                    <li>Rubell Family Collection</li>
+                                    <li>Deutsche Bank Collection</li>
+                                    <li>X Artists' Books Collection (MoMA Library)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- CV Link -->
+                    <div class="about-cta">
+                        <a href="#contact" class="cv-link-primary">Commission & Inquiry</a>
+                        <a href="/assets/villalobos-cv-2024.pdf" class="cv-link-secondary" aria-label="Download full curriculum vitae PDF" download>Download Full CV</a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Details -->
+                <aside class="bio-sidebar">
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-heading">Studio</h3>
+                        <p class="sidebar-text">Brooklyn, New York</p>
+                    </div>
+
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-heading">Education</h3>
+                        <p class="sidebar-text">
+                            <strong>MFA Painting</strong><br>
+                            Yale School of Art, 2015
+                        </p>
+                        <p class="sidebar-text">
+                            <strong>BFA Studio Art</strong><br>
+                            UCLA, 2011
+                        </p>
+                    </div>
+
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-heading">Representation</h3>
+                        <p class="sidebar-text">
+                            Lehmann Maupin<br>
+                            <small>New York / Seoul / London</small>
+                        </p>
+                        <p class="sidebar-text">
+                            Night Gallery<br>
+                            <small>Los Angeles</small>
+                        </p>
+                    </div>
+
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-heading">Awards</h3>
+                        <p class="sidebar-text">Pollock-Krasner Foundation Grant, 2023</p>
+                        <p class="sidebar-text">Joan Mitchell Foundation Painters & Sculptors Grant, 2021</p>
+                    </div>
+                </aside>
+
             </div>
         </section>
 
@@ -206,9 +374,27 @@
             <p class="contact-intro">For commissions, press inquiries, or to be added to the private mailing list for upcoming shows and available work, please reach out directly.</p>
             <a href="mailto:contact@anjelinavillalobos.com" class="email-link" aria-label="Email Anjelina Villalobos">contact@anjelinavillalobos.com</a>
             <nav class="social-links" aria-label="Social media links">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Follow on Instagram">INSTAGRAM</a>
-                <a href="https://artsy.net" target="_blank" rel="noopener noreferrer" aria-label="View collection on Artsy">ARTSY</a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Follow on Twitter">TWITTER</a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Follow on Instagram" class="social-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="18" cy="6" r="1" fill="currentColor"/>
+                    </svg>
+                    <span class="social-label">Instagram</span>
+                </a>
+                <a href="https://artsy.net" target="_blank" rel="noopener noreferrer" aria-label="View collection on Artsy" class="social-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 21L12 3L21 21H3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <line x1="7" y1="16" x2="17" y2="16" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <span class="social-label">Artsy</span>
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Follow on Twitter" class="social-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M23 3C22 3.5 20.5 4 19 4.5C18 3 16.5 2 14.5 2C11 2 8.5 4.5 8.5 8C8.5 8.5 8.5 9 8.5 9.5C5.5 9.5 3 7.5 1.5 5C1 6 1 7 1 8C1 10 2 11.5 3.5 12.5C2.5 12.5 2 12 1.5 11.5C1.5 14 3.5 16 6 16.5C5.5 16.5 5 17 4.5 17C5 19 7 20.5 9.5 20.5C7.5 22 5 23 2 23C4.5 24.5 7.5 25 10.5 25C17.5 25 21.5 19 21.5 13.5V12.5C22.5 12 23.5 11 24 10C23.5 10 23 10.5 22.5 10.5C23 10 23.5 9.5 24 9C23.5 9.5 22.5 10 21.5 10C21 9 20 8.5 19 8.5L23 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="social-label">Twitter</span>
+                </a>
             </nav>
         </section>
 
@@ -221,7 +407,10 @@
 
     <div class="sr-only" role="status" aria-live="polite" aria-atomic="true" id="announcer"></div>
 
-    <div id="toast">Pro Tip: Press <kbd>G</kbd> to view the full gallery.</div>
+    <!-- Lightbox Toast Notification (First-time hint) -->
+    <div id="lightboxToast" role="alert" aria-live="assertive">
+        Use <kbd>Esc</kbd> and <kbd>←</kbd> <kbd>→</kbd> to navigate
+    </div>
 
     <!-- Command Bar Gallery -->
     <div class="command-bar-overlay" id="commandBar" role="dialog" aria-label="Gallery overview" aria-modal="true">
@@ -237,26 +426,31 @@
     <div class="lightbox-overlay" id="lightboxOverlay" role="dialog" aria-label="Artwork detail view" aria-modal="true">
         <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
         </button>
 
         <div class="lightbox-nav">
             <button class="lightbox-nav-btn prev" id="lightboxPrev" aria-label="Previous artwork">
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 8L10 16L20 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20 8L12 16L20 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
             <button class="lightbox-nav-btn next" id="lightboxNext" aria-label="Next artwork">
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 8L22 16L12 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 8L20 16L12 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
         </div>
 
         <div class="lightbox-content">
             <div class="lightbox-image-container">
+                <div class="lightbox-loading" id="lightboxLoading">
+                    <div class="lightbox-loading-spinner"></div>
+                </div>
                 <img id="lightboxImage" src="" alt="" class="lightbox-image">
+                <img id="lightboxImage2" src="" alt="" class="lightbox-image">
             </div>
             <div class="lightbox-info">
                 <h2 id="lightboxTitle"></h2>
@@ -269,11 +463,65 @@
                 <button class="lightbox-inquire-btn" id="lightboxInquireBtn" style="display: none;"></button>
             </div>
         </div>
+
+        <!-- Bottom overlay with artwork info -->
+        <div class="lightbox-bottom-bar" id="lightboxBottomBar">
+            <div class="lightbox-bottom-content">
+                <div class="lightbox-bottom-info">
+                    <h3 class="lightbox-bottom-title" id="lightboxBottomTitle"></h3>
+                    <p class="lightbox-bottom-meta" id="lightboxBottomMeta"></p>
+                </div>
+                <div class="lightbox-bottom-controls">
+                    <span class="lightbox-counter" id="lightboxCounter"></span>
+                    <button class="lightbox-info-toggle" id="lightboxInfoToggle" aria-label="Toggle artwork details">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+                            <circle cx="10" cy="6.5" r="1.2" fill="currentColor"/>
+                            <rect x="9.25" y="9.5" width="1.5" height="6" fill="currentColor" rx="0.75"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expanded info panel - Museum Placard Structure -->
+        <div class="lightbox-expanded-info" id="lightboxExpandedInfo">
+            <div class="lightbox-expanded-content">
+                <button class="lightbox-expanded-close" id="lightboxExpandedClose" aria-label="Close details">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M5 5L15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+
+                <!-- Title Section -->
+                <h2 class="placard-title" id="lightboxExpandedTitle"></h2>
+                <p class="placard-meta" id="lightboxExpandedMeta"></p>
+
+                <!-- Artist's Statement Section -->
+                <div class="placard-section" id="artistStatementSection" style="display: none;">
+                    <h3 class="placard-heading">Artist's Statement</h3>
+                    <blockquote class="placard-statement" id="lightboxArtistStatement"></blockquote>
+                </div>
+
+                <!-- Additional Details -->
+                <div class="placard-section">
+                    <p id="lightboxExpandedDescription"></p>
+                    <p id="lightboxExpandedTechnique"></p>
+                    <p id="lightboxExpandedInspiration"></p>
+                    <p id="lightboxExpandedSeries"></p>
+                    <p id="lightboxExpandedDimensionsNote"></p>
+                </div>
+
+                <button class="lightbox-expanded-inquire-btn" id="lightboxExpandedInquireBtn" style="display: none;"></button>
+            </div>
+        </div>
     </div>
 
-    <!-- GSAP + ScrollTrigger for animations -->
+    <!-- GSAP + Plugins for animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
 
     <!-- Modular Portfolio Application -->
     <script type="module" src="scripts/modules/main.js"></script>

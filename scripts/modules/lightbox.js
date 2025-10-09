@@ -1,8 +1,6 @@
 // lightbox.js - Lightbox Modal Module
 // Handles fullscreen artwork viewing with navigation and focus management
 
-import { ZoomViewer } from './zoom-viewer.js';
-
 export class Lightbox {
     constructor(portfolioData) {
         this.portfolioData = portfolioData;
@@ -15,6 +13,9 @@ export class Lightbox {
         // DOM elements
         this.lightbox = null;
         this.lightboxImage = null;
+        this.lightboxImage2 = null;
+        this.currentLightboxImage = null;
+        this.nextLightboxImage = null;
         this.lightboxTitle = null;
         this.lightboxYear = null;
         this.lightboxMedium = null;
@@ -23,10 +24,27 @@ export class Lightbox {
         this.lightboxInspiration = null;
         this.lightboxSeries = null;
         this.lightboxDimensionsNote = null;
-        this.zoomViewer = null;
         this.closeBtn = null;
         this.prevBtn = null;
         this.nextBtn = null;
+
+        // New UI elements
+        this.lightboxLoading = null;
+        this.lightboxBottomBar = null;
+        this.lightboxBottomTitle = null;
+        this.lightboxBottomMeta = null;
+        this.lightboxCounter = null;
+        this.lightboxInfoToggle = null;
+        this.lightboxExpandedInfo = null;
+        this.lightboxExpandedClose = null;
+        this.lightboxExpandedTitle = null;
+        this.lightboxExpandedMeta = null;
+        this.lightboxExpandedDescription = null;
+        this.lightboxExpandedTechnique = null;
+        this.lightboxExpandedInspiration = null;
+        this.lightboxExpandedSeries = null;
+        this.lightboxExpandedDimensionsNote = null;
+        this.lightboxExpandedInquireBtn = null;
     }
 
     init() {
@@ -37,6 +55,9 @@ export class Lightbox {
     cacheElements() {
         this.lightbox = document.getElementById('lightboxOverlay');
         this.lightboxImage = document.getElementById('lightboxImage');
+        this.lightboxImage2 = document.getElementById('lightboxImage2');
+        this.currentLightboxImage = this.lightboxImage;
+        this.nextLightboxImage = this.lightboxImage2;
         this.lightboxTitle = document.getElementById('lightboxTitle');
         this.lightboxMeta = document.getElementById('lightboxMeta');
         this.lightboxDescription = document.getElementById('lightboxDescription');
@@ -45,10 +66,27 @@ export class Lightbox {
         this.lightboxSeries = document.getElementById('lightboxSeries');
         this.lightboxDimensionsNote = document.getElementById('lightboxDimensionsNote');
         this.lightboxInquireBtn = document.getElementById('lightboxInquireBtn');
-        this.zoomViewer = new ZoomViewer();
         this.closeBtn = document.getElementById('lightboxClose');
         this.prevBtn = document.getElementById('lightboxPrev');
         this.nextBtn = document.getElementById('lightboxNext');
+
+        // New UI elements
+        this.lightboxLoading = document.getElementById('lightboxLoading');
+        this.lightboxBottomBar = document.getElementById('lightboxBottomBar');
+        this.lightboxBottomTitle = document.getElementById('lightboxBottomTitle');
+        this.lightboxBottomMeta = document.getElementById('lightboxBottomMeta');
+        this.lightboxCounter = document.getElementById('lightboxCounter');
+        this.lightboxInfoToggle = document.getElementById('lightboxInfoToggle');
+        this.lightboxExpandedInfo = document.getElementById('lightboxExpandedInfo');
+        this.lightboxExpandedClose = document.getElementById('lightboxExpandedClose');
+        this.lightboxExpandedTitle = document.getElementById('lightboxExpandedTitle');
+        this.lightboxExpandedMeta = document.getElementById('lightboxExpandedMeta');
+        this.lightboxExpandedDescription = document.getElementById('lightboxExpandedDescription');
+        this.lightboxExpandedTechnique = document.getElementById('lightboxExpandedTechnique');
+        this.lightboxExpandedInspiration = document.getElementById('lightboxExpandedInspiration');
+        this.lightboxExpandedSeries = document.getElementById('lightboxExpandedSeries');
+        this.lightboxExpandedDimensionsNote = document.getElementById('lightboxExpandedDimensionsNote');
+        this.lightboxExpandedInquireBtn = document.getElementById('lightboxExpandedInquireBtn');
     }
 
     attachEventListeners() {
@@ -80,7 +118,12 @@ export class Lightbox {
 
             switch (e.key) {
                 case 'Escape':
-                    this.close();
+                    // Close expanded info if open, otherwise close lightbox
+                    if (this.lightboxExpandedInfo && this.lightboxExpandedInfo.classList.contains('show')) {
+                        this.toggleExpandedInfo();
+                    } else {
+                        this.close();
+                    }
                     break;
                 case 'ArrowLeft':
                     this.showPrevious();
@@ -93,6 +136,16 @@ export class Lightbox {
                     break;
             }
         });
+
+        // Info toggle button
+        if (this.lightboxInfoToggle) {
+            this.lightboxInfoToggle.addEventListener('click', () => this.toggleExpandedInfo());
+        }
+
+        // Expanded info close button
+        if (this.lightboxExpandedClose) {
+            this.lightboxExpandedClose.addEventListener('click', () => this.toggleExpandedInfo());
+        }
     }
 
     open(work, index, worksArray = null) {
@@ -105,11 +158,61 @@ export class Lightbox {
         // Store the element that had focus
         this.previousFocusElement = document.activeElement;
 
+        // Show loading state
+        if (this.lightboxLoading) {
+            this.lightboxLoading.classList.remove('hidden');
+        }
+
         // Update lightbox content
         if (this.lightboxImage) {
-            this.lightboxImage.src = work.image_url;
-            this.lightboxImage.alt = work.title;
+            // Handle image loading
+            const img = new Image();
+            img.onload = () => {
+                this.currentLightboxImage.src = work.image_url;
+                this.currentLightboxImage.alt = work.title;
+                this.currentLightboxImage.classList.add('visible');
+                if (this.lightboxLoading) {
+                    this.lightboxLoading.classList.add('hidden');
+                }
+            };
+            img.onerror = () => {
+                if (this.lightboxLoading) {
+                    this.lightboxLoading.classList.add('hidden');
+                }
+            };
+            img.src = work.image_url;
         }
+
+        // Update bottom bar
+        if (this.lightboxBottomTitle) this.lightboxBottomTitle.textContent = work.title;
+        if (this.lightboxBottomMeta) this.lightboxBottomMeta.textContent = `${work.year} • ${work.medium}`;
+        if (this.lightboxCounter) {
+            const currentPosition = index + 1;
+            const total = this.currentWorks.length;
+            this.lightboxCounter.textContent = `${currentPosition} / ${total}`;
+        }
+
+        // Update expanded info panel (museum placard structure)
+        if (this.lightboxExpandedTitle) this.lightboxExpandedTitle.textContent = work.title;
+        if (this.lightboxExpandedMeta) this.lightboxExpandedMeta.textContent = `${work.year} • ${work.medium}${work.dimensions ? ' • ' + work.dimensions : ''}`;
+
+        // Artist Statement Section
+        const artistStatementSection = document.getElementById('artistStatementSection');
+        const artistStatementElement = document.getElementById('lightboxArtistStatement');
+        if (work.artist_statement && artistStatementSection && artistStatementElement) {
+            artistStatementElement.textContent = work.artist_statement;
+            artistStatementSection.style.display = 'block';
+        } else if (artistStatementSection) {
+            artistStatementSection.style.display = 'none';
+        }
+
+        if (this.lightboxExpandedDescription) this.setOrHide(this.lightboxExpandedDescription, work.description, '');
+        if (this.lightboxExpandedTechnique) this.setOrHide(this.lightboxExpandedTechnique, work.technique, 'Technique: ');
+        if (this.lightboxExpandedInspiration) this.setOrHide(this.lightboxExpandedInspiration, work.inspiration, 'Inspiration: ');
+        if (this.lightboxExpandedSeries) this.setOrHide(this.lightboxExpandedSeries, work.series, 'Series: ');
+        if (this.lightboxExpandedDimensionsNote) this.setOrHide(this.lightboxExpandedDimensionsNote, work.dimensions_note, '');
+
+        // Update old info panel (kept for compatibility)
         if (this.lightboxTitle) this.lightboxTitle.textContent = work.title;
         if (this.lightboxMeta) this.lightboxMeta.textContent = `${work.year} • ${work.medium}${work.dimensions ? ' • ' + work.dimensions : ''}`;
         if (this.lightboxDescription) this.setOrHide(this.lightboxDescription, work.description, '');
@@ -118,17 +221,12 @@ export class Lightbox {
         if (this.lightboxSeries) this.setOrHide(this.lightboxSeries, work.series, 'Series: ');
         if (this.lightboxDimensionsNote) this.setOrHide(this.lightboxDimensionsNote, work.dimensions_note, '');
 
-        // Update inquiry button with mailto functionality
+        // Update inquiry buttons
         this.updateInquireButton(work);
-
-        // Initialize zoom viewer
-        const lightboxImageContainer = this.lightbox.querySelector('.lightbox-image-container');
-        if (lightboxImageContainer && this.zoomViewer) {
-            this.zoomViewer.init(this.lightboxImage, lightboxImageContainer);
-        }
+        this.updateExpandedInquireButton(work);
 
         // Show lightbox with GSAP animation
-        this.lightbox.style.display = 'flex';
+        this.lightbox.classList.add('show');
         document.body.style.overflow = 'hidden'; // Prevent background scrolling
 
         // Check if GSAP is available
@@ -139,24 +237,14 @@ export class Lightbox {
                 { opacity: 1, duration: 0.3, ease: 'power2.out' }
             );
 
-            // Animate content with stagger
-            const lightboxContent = this.lightbox.querySelector('.lightbox-info');
+            // Animate image
             const lightboxImage = this.lightbox.querySelector('.lightbox-image-container');
-
-            gsap.fromTo(lightboxImage,
-                { opacity: 0, scale: 0.95 },
-                { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out', delay: 0.1 }
-            );
-
-            if (lightboxContent) {
-                const contentElements = lightboxContent.querySelectorAll('h2, p, button');
-                gsap.fromTo(contentElements,
-                    { opacity: 0, y: 20 },
-                    { opacity: 1, y: 0, duration: 0.4, stagger: 0.08, ease: 'power2.out', delay: 0.2 }
+            if (lightboxImage) {
+                gsap.fromTo(lightboxImage,
+                    { opacity: 0, scale: 0.95 },
+                    { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out', delay: 0.1 }
                 );
             }
-        } else {
-            this.lightbox.classList.add('show');
         }
 
         // Set up focus trap
@@ -167,9 +255,34 @@ export class Lightbox {
             if (this.closeBtn) this.closeBtn.focus();
         }, 400);
 
+        // Show first-time keyboard hint toast
+        this.showLightboxHint();
+
         // Announce to screen readers
         if (window.announceToScreenReader) {
             window.announceToScreenReader(`Viewing ${work.title}. Use arrow keys to navigate, escape to close.`);
+        }
+    }
+
+    showLightboxHint() {
+        const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+        const lastSeenTimestamp = localStorage.getItem('lightboxHintTimestamp');
+        const now = Date.now();
+
+        // Show hint if never seen or if 30 days have passed
+        if (!lastSeenTimestamp || (now - parseInt(lastSeenTimestamp)) > THIRTY_DAYS) {
+            const toast = document.getElementById('lightboxToast');
+
+            if (!toast) return;
+
+            // Show the toast
+            toast.classList.add('show');
+
+            // Hide it after 5 seconds and set the timestamp
+            setTimeout(() => {
+                toast.classList.remove('show');
+                localStorage.setItem('lightboxHintTimestamp', now.toString());
+            }, 5000);
         }
     }
 
@@ -196,7 +309,6 @@ export class Lightbox {
                 duration: 0.25,
                 ease: 'power2.in',
                 onComplete: () => {
-                    this.lightbox.style.display = 'none';
                     this.lightbox.classList.remove('show');
                     document.body.style.overflow = ''; // Restore scrolling
 
@@ -217,23 +329,120 @@ export class Lightbox {
         if (window.announceToScreenReader) {
             window.announceToScreenReader('Lightbox closed');
         }
-
-        // Clean up zoom viewer
-        if (this.zoomViewer) {
-            this.zoomViewer.destroy();
-        }
     }
 
     showNext() {
         const nextIndex = (this.currentIndex + 1) % this.currentWorks.length;
         const nextWork = this.currentWorks[nextIndex];
-        this.open(nextWork, nextIndex, this.currentWorks);
+        this.navigateToWork(nextWork, nextIndex);
     }
 
     showPrevious() {
         const prevIndex = (this.currentIndex - 1 + this.currentWorks.length) % this.currentWorks.length;
         const prevWork = this.currentWorks[prevIndex];
-        this.open(prevWork, prevIndex, this.currentWorks);
+        this.navigateToWork(prevWork, prevIndex);
+    }
+
+    navigateToWork(work, index) {
+        if (!this.isOpen) return;
+
+        this.currentIndex = index;
+
+        // Show loading state briefly
+        if (this.lightboxLoading) {
+            this.lightboxLoading.classList.remove('hidden');
+        }
+
+        // Preload the next image
+        const img = new Image();
+        img.onload = () => {
+            // Set the image on the hidden layer
+            this.nextLightboxImage.src = work.image_url;
+            this.nextLightboxImage.alt = work.title;
+
+            // Crossfade: hide current, show next
+            this.currentLightboxImage.classList.remove('visible');
+            this.nextLightboxImage.classList.add('visible');
+
+            // Swap the roles for next transition
+            [this.currentLightboxImage, this.nextLightboxImage] = [this.nextLightboxImage, this.currentLightboxImage];
+
+            // Hide loading
+            if (this.lightboxLoading) {
+                this.lightboxLoading.classList.add('hidden');
+            }
+
+            // Update text content with fade
+            this.updateLightboxInfo(work);
+        };
+
+        img.onerror = () => {
+            if (this.lightboxLoading) {
+                this.lightboxLoading.classList.add('hidden');
+            }
+        };
+
+        img.src = work.image_url;
+    }
+
+    updateLightboxInfo(work) {
+        // Fade out bottom bar content
+        if (this.lightboxBottomBar && typeof gsap !== 'undefined') {
+            gsap.to([this.lightboxBottomTitle, this.lightboxBottomMeta, this.lightboxCounter], {
+                opacity: 0,
+                duration: 0.3,
+                onComplete: () => {
+                    // Update content
+                    if (this.lightboxBottomTitle) this.lightboxBottomTitle.textContent = work.title;
+                    if (this.lightboxBottomMeta) this.lightboxBottomMeta.textContent = `${work.year} • ${work.medium}`;
+                    if (this.lightboxCounter) {
+                        const currentPosition = this.currentIndex + 1;
+                        const total = this.currentWorks.length;
+                        this.lightboxCounter.textContent = `${currentPosition} / ${total}`;
+                    }
+
+                    // Fade back in
+                    gsap.to([this.lightboxBottomTitle, this.lightboxBottomMeta, this.lightboxCounter], {
+                        opacity: 1,
+                        duration: 0.5,
+                        delay: 0.2
+                    });
+                }
+            });
+        } else {
+            // Fallback without animation
+            if (this.lightboxBottomTitle) this.lightboxBottomTitle.textContent = work.title;
+            if (this.lightboxBottomMeta) this.lightboxBottomMeta.textContent = `${work.year} • ${work.medium}`;
+            if (this.lightboxCounter) {
+                const currentPosition = this.currentIndex + 1;
+                const total = this.currentWorks.length;
+                this.lightboxCounter.textContent = `${currentPosition} / ${total}`;
+            }
+        }
+
+        // Update expanded info panel
+        if (this.lightboxExpandedTitle) this.lightboxExpandedTitle.textContent = work.title;
+        if (this.lightboxExpandedMeta) this.lightboxExpandedMeta.textContent = `${work.year} • ${work.medium}${work.dimensions ? ' • ' + work.dimensions : ''}`;
+
+        // Artist Statement Section
+        const artistStatementSection = document.getElementById('artistStatementSection');
+        const artistStatementElement = document.getElementById('lightboxArtistStatement');
+        if (work.artist_statement && artistStatementSection && artistStatementElement) {
+            artistStatementElement.textContent = work.artist_statement;
+            artistStatementSection.style.display = 'block';
+        } else if (artistStatementSection) {
+            artistStatementSection.style.display = 'none';
+        }
+
+        if (this.lightboxExpandedDescription) this.setOrHide(this.lightboxExpandedDescription, work.description, '');
+        if (this.lightboxExpandedTechnique) this.setOrHide(this.lightboxExpandedTechnique, work.technique, 'Technique: ');
+        if (this.lightboxExpandedInspiration) this.setOrHide(this.lightboxExpandedInspiration, work.inspiration, 'Inspiration: ');
+        if (this.lightboxExpandedSeries) this.setOrHide(this.lightboxExpandedSeries, work.series, 'Series: ');
+        if (this.lightboxExpandedDimensionsNote) this.setOrHide(this.lightboxExpandedDimensionsNote, work.dimensions_note, '');
+
+        // Update inquire buttons
+        this.updateInquireButton(work);
+        this.updateExpandedInquireButton(work);
     }
 
     setupFocusTrap() {
@@ -271,7 +480,7 @@ export class Lightbox {
 
         const availability = work.availability || (work.isForSale ? 'Available' : 'Sold');
 
-        // Determine button text and action based on availability
+        // Determine button text and action based on availability (generic gallery-style text)
         if (availability === 'Available' || work.isForSale) {
             this.lightboxInquireBtn.textContent = 'INQUIRE ABOUT ORIGINAL';
             this.lightboxInquireBtn.style.display = 'block';
@@ -289,7 +498,7 @@ export class Lightbox {
                 window.location.href = `mailto:contact@anjelinavillalobos.com?subject=${subject}&body=${body}`;
             };
         } else if (work.printUrl) {
-            this.lightboxInquireBtn.textContent = 'PURCHASE PRINT';
+            this.lightboxInquireBtn.textContent = `Purchase '${work.title}' Print`;
             this.lightboxInquireBtn.style.display = 'block';
             this.lightboxInquireBtn.onclick = () => {
                 window.location.href = work.printUrl;
@@ -303,6 +512,66 @@ export class Lightbox {
             this.lightboxInquireBtn.onclick = null;
         } else {
             this.lightboxInquireBtn.style.display = 'none';
+        }
+    }
+
+    toggleExpandedInfo() {
+        if (!this.lightboxExpandedInfo) return;
+
+        const isOpen = this.lightboxExpandedInfo.classList.contains('show');
+
+        if (isOpen) {
+            this.lightboxExpandedInfo.classList.remove('show');
+            // Show bottom bar again
+            if (this.lightboxBottomBar) {
+                this.lightboxBottomBar.classList.remove('hidden');
+            }
+        } else {
+            this.lightboxExpandedInfo.classList.add('show');
+            // Hide bottom bar when expanded info is open
+            if (this.lightboxBottomBar) {
+                this.lightboxBottomBar.classList.add('hidden');
+            }
+        }
+    }
+
+    updateExpandedInquireButton(work) {
+        if (!this.lightboxExpandedInquireBtn) return;
+
+        const availability = work.availability || (work.isForSale ? 'Available' : 'Sold');
+
+        // Determine button text and action based on availability (generic gallery-style text)
+        if (availability === 'Available' || work.isForSale) {
+            this.lightboxExpandedInquireBtn.textContent = 'INQUIRE ABOUT ORIGINAL';
+            this.lightboxExpandedInquireBtn.style.display = 'block';
+
+            // Create mailto link with pre-filled subject and body
+            this.lightboxExpandedInquireBtn.onclick = () => {
+                const subject = encodeURIComponent(`Inquiry: ${work.title}`);
+                const body = encodeURIComponent(
+                    `Hi,\n\nI'm interested in learning more about "${work.title}" (${work.year}).\n\n` +
+                    `Details:\n` +
+                    `• Medium: ${work.medium}\n` +
+                    `• Dimensions: ${work.dimensions}\n\n` +
+                    `Please let me know about pricing and availability.\n\nThank you!`
+                );
+                window.location.href = `mailto:contact@anjelinavillalobos.com?subject=${subject}&body=${body}`;
+            };
+        } else if (work.printUrl) {
+            this.lightboxExpandedInquireBtn.textContent = `Purchase '${work.title}' Print`;
+            this.lightboxExpandedInquireBtn.style.display = 'block';
+            this.lightboxExpandedInquireBtn.onclick = () => {
+                window.location.href = work.printUrl;
+            };
+        } else if (availability === 'Sold' || availability === 'Private Collection') {
+            // Show status but don't make it clickable
+            this.lightboxExpandedInquireBtn.textContent = availability.toUpperCase();
+            this.lightboxExpandedInquireBtn.style.display = 'block';
+            this.lightboxExpandedInquireBtn.style.opacity = '0.5';
+            this.lightboxExpandedInquireBtn.style.cursor = 'default';
+            this.lightboxExpandedInquireBtn.onclick = null;
+        } else {
+            this.lightboxExpandedInquireBtn.style.display = 'none';
         }
     }
 

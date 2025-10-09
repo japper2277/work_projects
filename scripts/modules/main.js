@@ -7,6 +7,7 @@ import { Lightbox } from './lightbox.js';
 import { Gallery } from './gallery.js';
 import { Animations } from './animations.js';
 import { announceToScreenReader } from './utils.js';
+import { initAboutSection } from '../about-section.js';
 
 class PortfolioApp {
     constructor() {
@@ -71,6 +72,9 @@ class PortfolioApp {
         // Initialize animations
         this.animations = new Animations();
         this.animations.init();
+
+        // Initialize about section interactive elements
+        initAboutSection();
 
         // Make controllers available globally for cross-module communication
         window.LightboxController = this.lightbox;

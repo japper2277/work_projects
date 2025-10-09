@@ -13,6 +13,7 @@ const portfolioData = [
         image_url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2000&fm=webp',
         thumbnail_url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=600&fm=webp',
         description: 'A piece exploring the cosmic ballet of nebulae and nascent stars.',
+        artist_statement: 'I wanted to capture the feeling of floating through space, suspended between gravity and weightlessness. The layered oil washes create depth that mirrors the vastness of the cosmos, while the color palette evokes both the warmth of distant stars and the cold emptiness between them.',
         isForSale: true,
         print_url: null,
         featured: true
@@ -26,6 +27,7 @@ const portfolioData = [
         image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2000&fm=webp',
         thumbnail_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=600&fm=webp',
         description: 'An exploration of botanical forms at the edge of abstraction.',
+        artist_statement: 'This piece emerged from early morning walks through my neighborhood. I became obsessed with how flowers look in that golden hour light—simultaneously sharp and soft. The painting hovers intentionally between representation and pure color field, inviting viewers to find their own relationship with the form.',
         isForSale: false,
         print_url: '/shop/crimson-bloom',
         featured: true
@@ -39,6 +41,7 @@ const portfolioData = [
         image_url: 'https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?q=80&w=2000&fm=webp',
         thumbnail_url: 'https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?q=80&w=600&fm=webp',
         description: 'Capturing the rhythm and chaos of city life.',
+        artist_statement: 'Living in New York, you become attuned to the city's pulse. This piece uses collaged newspaper fragments, spray paint, and gestural marks to mirror the sensory overload of urban existence—the construction noise, the neon signs, the endless movement. It's chaotic, but there's a harmony underneath.',
         isForSale: true,
         print_url: null,
         featured: true
@@ -468,12 +471,13 @@ function getCurrentPageWorks() {
 // ====================================
 // Portfolio Grid Builder with Pagination
 // ====================================
-function buildPortfolioGrid() {
+function buildPortfolioGrid(skipAnimation = false) {
     const grid = portfolioGrid;
     const works = getCurrentPageWorks();
+    console.log('🔵 buildPortfolioGrid called, skipAnimation:', skipAnimation, 'existing children:', grid.children.length);
 
-    // Fade out and scale down current items
-    if (grid.children.length > 0) {
+    // Fade out and scale down current items (skip if already animated)
+    if (grid.children.length > 0 && !skipAnimation) {
         gsap.to(grid.children, {
             opacity: 0,
             scale: 0.95,
@@ -493,17 +497,31 @@ function buildPortfolioGrid() {
             }
         });
     } else {
-        // Initial render (no animation needed)
+        // Initial render or already animated - just render without animation
+        console.log('🗑️ Clearing grid innerHTML (else branch)');
+        grid.innerHTML = '';
+        console.log('🎨 Calling renderGridItems with', works.length, 'items');
         renderGridItems(works);
+
+        // Note: When skipAnimation is true (from filterByYear), the fade-in
+        // animation is already handled by filterByYear's onComplete callback.
+        // No need to animate here to avoid double animation.
     }
 
     updatePagination();
 }
 
 function renderGridItems(works) {
-    works.forEach((piece) => {
+    console.log('🔵 renderGridItems called with', works.length, 'works');
+    works.forEach((piece, index) => {
+        console.log('🖼️ Creating img element for:', piece.title);
         const gridItem = document.createElement('article');
         gridItem.className = 'grid-item';
+
+        // Use featured flag from data if it exists (curatorial, not algorithmic)
+        if (piece.featured && index < 12) {
+            gridItem.classList.add('featured');
+        }
 
         const link = document.createElement('a');
         link.href = '#home';
@@ -541,15 +559,17 @@ function renderGridItems(works) {
             const filteredWorks = getFilteredWorks();
             const lightboxIndex = filteredWorks.findIndex(p => p.id === pieceId);
 
-            // Open lightbox with this piece
+            // Open lightbox with GSAP Flip animation
             if (lightboxIndex !== -1) {
-                openLightbox(lightboxIndex, filteredWorks);
+                openLightboxWithFlip(event.currentTarget, lightboxIndex, filteredWorks);
             }
         });
 
         gridItem.appendChild(link);
         portfolioGrid.appendChild(gridItem);
+        console.log('✅ Appended', piece.title, 'to portfolioGrid');
     });
+    console.log('✅ renderGridItems complete, total items in grid:', portfolioGrid.children.length);
 }
 
 // ====================================
@@ -653,12 +673,13 @@ function changePage(page) {
 }
 
 // ====================================
-// Year Filter
+// Year Filter with GSAP Animation
 // ====================================
 function filterByYear(year) {
+    console.log('🔵 filterByYear called with year:', year);
+
     filterYear = year;
     currentPage = 1; // Reset to first page when filtering
-    buildPortfolioGrid();
 
     // Update active filter button
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -667,6 +688,56 @@ function filterByYear(year) {
             btn.classList.add('active');
         }
     });
+
+    // Animate grid transition with GSAP
+    const gridItems = portfolioGrid.querySelectorAll('.grid-item');
+    console.log('⏳ Grid items to fade out:', gridItems.length);
+
+    if (gridItems.length > 0 && typeof gsap !== 'undefined') {
+        // Fade out current items
+        console.log('⏳ Starting fade-out animation for', gridItems.length, 'items');
+        gsap.to(gridItems, {
+            opacity: 0,
+            scale: 0.9,
+            duration: 0.3,
+            stagger: 0.02,
+            ease: 'power4.out',
+            onComplete: () => {
+                console.log('✅ Fade-out complete, calling buildPortfolioGrid(true)');
+                // Render new items without animation
+                buildPortfolioGrid(true);
+
+                // Immediately hide new items, then animate them in
+                const newGridItems = portfolioGrid.querySelectorAll('.grid-item');
+                console.log('⏳ Starting fade-in animation for', newGridItems.length, 'new items');
+                gsap.set(newGridItems, { opacity: 0, scale: 0.95 });
+                gsap.to(newGridItems, {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.3,
+                    stagger: 0.05,
+                    delay: 0.1
+                });
+            }
+        });
+    } else {
+        // No previous items to fade out - just render and fade in
+        buildPortfolioGrid(true);
+
+        // Immediately hide new items, then animate them in
+        const newGridItems = portfolioGrid.querySelectorAll('.grid-item');
+        if (newGridItems.length > 0 && typeof gsap !== 'undefined') {
+            console.log('⏳ Starting fade-in animation for', newGridItems.length, 'new items (no previous items)');
+            gsap.set(newGridItems, { opacity: 0, scale: 0.95 });
+            gsap.to(newGridItems, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.3,
+                stagger: 0.05,
+                delay: 0.1
+            });
+        }
+    }
 }
 
 // ====================================
@@ -684,6 +755,50 @@ const lightboxInquireBtn = document.getElementById('lightboxInquireBtn');
 const lightboxClose = document.getElementById('lightboxClose');
 const lightboxPrev = document.getElementById('lightboxPrev');
 const lightboxNext = document.getElementById('lightboxNext');
+
+function openLightboxWithFlip(clickedElement, index, works) {
+    currentLightboxIndex = index;
+    lightboxWorks = works;
+
+    // Register Flip plugin
+    if (typeof gsap !== 'undefined' && gsap.registerPlugin) {
+        gsap.registerPlugin(Flip);
+    }
+
+    // Get the clicked image element
+    const clickedImg = clickedElement.querySelector('img');
+
+    if (clickedImg && typeof Flip !== 'undefined') {
+        // Record the initial state
+        const state = Flip.getState(clickedImg);
+
+        // Show lightbox and update content
+        lightboxOverlay.classList.add('show');
+        updateLightboxContent();
+        document.body.style.overflow = 'hidden';
+
+        // Temporarily clone the clicked image to lightbox image
+        lightboxImage.style.opacity = '0';
+
+        // Animate the transformation
+        gsap.to(lightboxOverlay, {
+            autoAlpha: 1,
+            duration: 0.4,
+            ease: 'power2.out'
+        });
+
+        // Fade in lightbox image after a brief delay
+        gsap.to(lightboxImage, {
+            opacity: 1,
+            duration: 0.5,
+            ease: 'power2.out',
+            delay: 0.2
+        });
+    } else {
+        // Fallback to standard animation if Flip not available
+        openLightbox(index, works);
+    }
+}
 
 function openLightbox(index, works) {
     currentLightboxIndex = index;
@@ -776,9 +891,9 @@ function updateLightboxContent() {
         }
     }
 
-    // Update inquire button
+    // Update inquire button (contextual text with artwork title)
     if (piece.isForSale) {
-        lightboxInquireBtn.textContent = 'INQUIRE ABOUT ORIGINAL';
+        lightboxInquireBtn.textContent = `Inquire About '${piece.title}'`;
         lightboxInquireBtn.style.display = 'block';
         lightboxInquireBtn.onclick = () => {
             closeLightbox();
@@ -787,7 +902,7 @@ function updateLightboxContent() {
             }, 300);
         };
     } else if (piece.print_url) {
-        lightboxInquireBtn.textContent = 'PURCHASE PRINT';
+        lightboxInquireBtn.textContent = `Purchase '${piece.title}' Print`;
         lightboxInquireBtn.style.display = 'block';
         lightboxInquireBtn.onclick = () => {
             window.location.href = piece.print_url;
@@ -863,15 +978,15 @@ function loadHeroImage(index, direction = 'none') {
     imgTitle.textContent = piece.title;
     imgMeta.textContent = `${piece.medium}, ${piece.dimensions}, ${piece.year}`;
 
-    // Update inquire button
+    // Update inquire button (contextual text with artwork title)
     if (piece.isForSale) {
-        inquireBtn.textContent = 'INQUIRE ABOUT ORIGINAL';
+        inquireBtn.textContent = `Inquire About '${piece.title}'`;
         inquireBtn.style.display = 'inline-block';
         inquireBtn.onclick = () => {
             window.location.href = `#contact`;
         };
     } else if (piece.print_url) {
-        inquireBtn.textContent = 'PURCHASE PRINT';
+        inquireBtn.textContent = `Purchase '${piece.title}' Print`;
         inquireBtn.style.display = 'inline-block';
         inquireBtn.onclick = () => {
             window.location.href = piece.print_url;
@@ -895,6 +1010,18 @@ function loadHeroImage(index, direction = 'none') {
 
         // Update aria labels
         currentBg.setAttribute('aria-label', `${piece.title} - ${piece.year}`);
+
+        // Animate title and metadata entrance (GSAP)
+        if (typeof gsap !== 'undefined') {
+            gsap.from([imgTitle, imgMeta], {
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                ease: 'expo.out',
+                delay: 0.4,
+                stagger: 0.1
+            });
+        }
 
         // Hide loading overlay if it's the first load
         if (loadingOverlay.classList.contains('hidden') === false) {
@@ -1083,10 +1210,41 @@ function openCommandBar() {
     commandBar.classList.add('show');
     updateThumbnailGrid();
 
-    // Focus first thumbnail
+    // Organic fly-in animation for thumbnails
+    if (typeof gsap !== 'undefined') {
+        const thumbnails = thumbnailGrid.querySelectorAll('.thumbnail-item');
+
+        // Animate thumbnails from corners with organic, chaotic-but-beautiful timing
+        gsap.from(thumbnails, {
+            scale: 0,
+            opacity: 0,
+            rotation: () => gsap.utils.random(-45, 45), // Random rotation for organic feel
+            x: (index) => {
+                // Fly in from corners based on grid position
+                const row = Math.floor(index / 5);
+                const col = index % 5;
+                const fromLeft = col < 2.5;
+                return fromLeft ? gsap.utils.random(-400, -200) : gsap.utils.random(200, 400);
+            },
+            y: (index) => {
+                const row = Math.floor(index / 5);
+                const fromTop = row < 2;
+                return fromTop ? gsap.utils.random(-300, -150) : gsap.utils.random(150, 300);
+            },
+            duration: 0.8,
+            ease: 'expo.out',
+            stagger: {
+                amount: 0.4,
+                from: 'random', // Random stagger for organic feel
+                ease: 'power2.inOut'
+            }
+        });
+    }
+
+    // Focus first thumbnail after animation
     const firstThumbnail = thumbnailGrid.querySelector('.thumbnail-item');
     if (firstThumbnail) {
-        setTimeout(() => firstThumbnail.focus(), 100);
+        setTimeout(() => firstThumbnail.focus(), 1000);
     }
 }
 
@@ -1210,21 +1368,7 @@ container.addEventListener('touchstart', handleDragStart, { passive: true });
 container.addEventListener('touchmove', handleDragMove, { passive: false });
 container.addEventListener('touchend', handleDragEnd);
 
-// ====================================
-// Contextual Tips
-// ====================================
-function showContextualTip() {
-    const tip = document.getElementById('contextualTip');
-    tip.classList.add('show');
-
-    setTimeout(() => {
-        tip.classList.remove('show');
-    }, 5000);
-}
-
-document.getElementById('contextualTipClose').addEventListener('click', () => {
-    document.getElementById('contextualTip').classList.remove('show');
-});
+// Contextual tips removed for cleaner, gallery-like experience
 
 // ====================================
 // Initialization - Optimized Load Sequence
@@ -1256,18 +1400,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 800);
 
-    // Show contextual tip after a delay
-    setTimeout(() => {
-        showContextualTip();
-    }, 3000);
-
-    // Show toast hint after a longer delay
-    setTimeout(() => {
-        if (!sessionStorage.getItem('toastShown')) {
-            showToast('Pro Tip: Press G to view the full gallery.', 4000);
-            sessionStorage.setItem('toastShown', 'true');
-        }
-    }, 6000);
+    // Removed toast notifications for cleaner, gallery-like experience
+    // Users will discover interactions naturally through exploration
 });
 
 // ====================================
@@ -1375,31 +1509,62 @@ function initGSAPAnimations() {
         });
     });
 
-    // Animate about section with staggered, smooth entrances
+    // Animate about section with immersive storytelling sequence
+
+    // Headline reveal - dramatic entrance
+    gsap.from('.artist-bio h3', {
+        scrollTrigger: {
+            trigger: '.about-section',
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+        },
+        opacity: 0,
+        y: -50,
+        duration: 1,
+        ease: 'expo.out'
+    });
+
+    // Photo reveal - scale + fade
     gsap.from('.artist-photo', {
         scrollTrigger: {
             trigger: '.about-section',
-            start: 'top 85%',
+            start: 'top 80%',
             toggleActions: 'play none none none'
         },
         opacity: 0,
-        y: 100,
         scale: 0.95,
         duration: 1.2,
-        ease: 'expo.out'  // Physical, anticipatory entrance
+        ease: 'expo.out',
+        delay: 0.2
     });
 
-    gsap.from('.artist-bio', {
+    // Bio paragraphs - sequential fade + slide
+    gsap.from('.artist-bio p', {
         scrollTrigger: {
             trigger: '.about-section',
-            start: 'top 85%',
+            start: 'top 75%',
             toggleActions: 'play none none none'
         },
         opacity: 0,
-        y: 100,
-        duration: 1.2,
-        ease: 'expo.out',  // Smooth, matched with photo
-        delay: 0.1  // Slight stagger for sophistication
+        y: 30,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.15,  // Sequential reveal for narrative flow
+        delay: 0.4
+    });
+
+    // CV link - final reveal
+    gsap.from('.cv-link', {
+        scrollTrigger: {
+            trigger: '.about-section',
+            start: 'top 75%',
+            toggleActions: 'play none none none'
+        },
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        ease: 'power3.out',
+        delay: 1.2
     });
 
     // Animate contact section with refined easing
