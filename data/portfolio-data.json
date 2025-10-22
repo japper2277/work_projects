@@ -138,19 +138,5 @@
         "printUrl": null,
         "availability": "Sold",
         "featured": false
-    },
-    {
-        "id": "cobalt-wakes-and-i-go-down",
-        "title": "cobalt wakes and I go down",
-        "year": 2024,
-        "medium": "Acrylic on Canvas",
-        "dimensions": "16\" × 20\"",
-        "image_url": "https://images.unsplash.com/photo-1551732998-c91d86d39a7e?q=80&w=2000&fm=webp",
-        "thumbnail_url": "https://images.unsplash.com/photo-1551732998-c91d86d39a7e?q=80&w=600&fm=webp",
-        "description": "Deep blues emerge and recede. A dance between rising and falling, waking and sleeping.",
-        "isForSale": true,
-        "printUrl": null,
-        "availability": "Available",
-        "featured": false
     }
 ]
